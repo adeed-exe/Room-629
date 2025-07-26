@@ -2,11 +2,11 @@
 
 #include "pch.h"
 
-class game;
+class Game;
 
-class player {
+class Player {
 private:
-    game* g;
+    Game* game;
 
     sf::Texture playerTexture;
     sf::Sprite playerChar;
@@ -20,7 +20,7 @@ private:
     void initPlayer();
 
 public:
-    player(game* gamePtr);
+    Player(Game* gamePtr);
 
     void animateIdle();
     void animateRun();

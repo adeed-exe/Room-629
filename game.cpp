@@ -1,40 +1,40 @@
 #include "pch.h"
 #include "game.h"
 
-void game::initVariables() {
+void Game::initVariables() {
     window = nullptr;
 
     frameWidth = 48, frameHeight = 48;
     scale = 5.f, animationSpeed = 0.1f;
-    playerMoveSpeed = 250.f, gravity = 980.f;
+    playerMoveSpeed = 250.f, gravity = 880.f;
     ground = 700.f, frameTimer = 0.f;
 
     playerJumping = 0, playerInAir = 0;
     playerVelocity.x = 0.f, playerVelocity.y = 0.f;
 }
 
-void game::initWindow() {
+void Game::initWindow() {
     window = new sf::RenderWindow(sf::VideoMode({ 1920, 1080 }), "Room 629", sf::Style::None);
     window->setFramerateLimit(60);
     window->setMouseCursorVisible(false);
 }
 
-game::game() {
+Game::Game() {
     initVariables();
     initWindow();
-    p = new player(this);
-    bg = new background(this);
+    player = new Player(this);
+    background = new Background(this);
 }
 
-game::~game() {
+Game::~Game() {
     delete window;
 }
 
-const bool game::running() const {
+const bool Game::running() const {
     return window->isOpen();
 }
 
-void game::pollEvents() {
+void Game::pollEvents() {
     while (const std::optional event = window->pollEvent()) {
         if (event->is<sf::Event::Closed>() || sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape)) {
             window->close();
@@ -42,85 +42,85 @@ void game::pollEvents() {
     }
 }
 
-void game::resetPlayer() {
+void Game::resetPlayer() {
     playerVelocity.x = 0.f;
 
     if (playerInAir) {
-        playerVelocity.y -= gravity * dt;
+        playerVelocity.y -= gravity * deltaTime;
     }
 }
 
-void game::updatePlayer() {
-    if (playerVelocity.x && !playerJumping) {
-        p->animateRun();
+void Game::updatePlayer() {
+    if (playerJumping) {
+        player->animateJump();
     }
-    else if (playerJumping) {
-        p->animateJump();
+    else if (playerVelocity.x) {
+        player->animateRun();
     }
     else {
-        p->animateIdle();
+        player->animateIdle();
     }
 }
 
-void game::resetBackground() {
-    if (bg->getBg2().getPosition().y < -120) {
+void Game::resetBackground() {
+    if (background->getBackground2().getPosition().y < -120) {
         playerInAir = 0;
-        bg->getBg2().setPosition({ bg->getBg2().getPosition().x, -120.f });
+        background->getBackground2().setPosition({ background->getBackground2().getPosition().x, -120.f });
     }
-    if (bg->getBg2().getPosition().x >= 0) {
-        bg->getBg2().setPosition({ bg->getBg2().getPosition().x - 1920, bg->getBg2().getPosition().y });
+    if (background->getBackground2().getPosition().x >= 0) {
+        background->getBackground2().setPosition({ background->getBackground2().getPosition().x - 1920, background->getBackground2().getPosition().y });
     }
-    if (bg->getBg2().getPosition().x <= -1920) {
-        bg->getBg2().setPosition({ bg->getBg2().getPosition().x + 1920, bg->getBg2().getPosition().y });
+    if (background->getBackground2().getPosition().x <= -1920) {
+        background->getBackground2().setPosition({ background->getBackground2().getPosition().x + 1920, background->getBackground2().getPosition().y });
     }
 
-    if (bg->getBg3().getPosition().y < -120) {
+    if (background->getBackground3().getPosition().y < -120) {
         playerInAir = 0;
-        bg->getBg3().setPosition({ bg->getBg3().getPosition().x, -120.f });
+        background->getBackground3().setPosition({ background->getBackground3().getPosition().x, -120.f });
     }
-    if (bg->getBg3().getPosition().x >= 0) {
-        bg->getBg3().setPosition({ bg->getBg3().getPosition().x - 1920, bg->getBg3().getPosition().y });
+    if (background->getBackground3().getPosition().x >= 0) {
+        background->getBackground3().setPosition({ background->getBackground3().getPosition().x - 1920, background->getBackground3().getPosition().y });
     }
-    if (bg->getBg3().getPosition().x <= -1920) {
-        bg->getBg3().setPosition({ bg->getBg3().getPosition().x + 1920, bg->getBg3().getPosition().y });
+    if (background->getBackground3().getPosition().x <= -1920) {
+        background->getBackground3().setPosition({ background->getBackground3().getPosition().x + 1920, background->getBackground3().getPosition().y });
     }
 
-    if (bg->getBg4().getPosition().y < -120) {
+    if (background->getBackground4().getPosition().y < -120) {
         playerInAir = 0;
-        bg->getBg4().setPosition({ bg->getBg4().getPosition().x, -120.f });
+        background->getBackground4().setPosition({ background->getBackground4().getPosition().x, -120.f });
     }
-    if (bg->getBg4().getPosition().x >= 0) {
-        bg->getBg4().setPosition({ bg->getBg4().getPosition().x - 1920, bg->getBg4().getPosition().y });
+    if (background->getBackground4().getPosition().x >= 0) {
+        background->getBackground4().setPosition({ background->getBackground4().getPosition().x - 1920, background->getBackground4().getPosition().y });
     }
-    if (bg->getBg4().getPosition().x <= -1920) {
-        bg->getBg4().setPosition({ bg->getBg4().getPosition().x + 1920, bg->getBg4().getPosition().y });
+    if (background->getBackground4().getPosition().x <= -1920) {
+        background->getBackground4().setPosition({ background->getBackground4().getPosition().x + 1920, background->getBackground4().getPosition().y });
     }
 }
 
-void game::updateBackground() {
-    bg->getBg2().move(playerVelocity * dt * 0.25f);
-    bg->getBg3().move(playerVelocity * dt * 0.5f);
-    bg->getBg4().move(playerVelocity * dt * 0.75f);
+void Game::updateBackground() {
+    background->getBackground2().move(playerVelocity * deltaTime * 0.25f);
+    background->getBackground3().move(playerVelocity * deltaTime * 0.50f);
+    background->getBackground4().move(playerVelocity * deltaTime * 0.75f);
 }
 
-void game::movementHandler() {
+void Game::movementHandler() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        p->getSprite().setScale({ -scale, scale });
-        p->getSprite().setOrigin({ static_cast<float>(frameWidth), 0 });
-        bg->moveLeft();
+        player->getSprite().setScale({ -scale, scale });
+        player->getSprite().setOrigin({ static_cast<float>(frameWidth), 0 });
+        background->moveLeft();
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        p->getSprite().setScale({ scale, scale });
-        p->getSprite().setOrigin({ 0, 0 });
-        bg->moveRight();
+        player->getSprite().setScale({ scale, scale });
+        player->getSprite().setOrigin({ 0, 0 });
+        background->moveRight();
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && !playerInAir) {
-        bg->jump();
+        background->jump();
     }
 }
 
-void game::update() {
-    dt = clock.restart().asSeconds();
+void Game::update() {
+    deltaTime = clock.restart().asSeconds();
 
     pollEvents();
 
@@ -133,14 +133,14 @@ void game::update() {
     updateBackground();
 }
 
-void game::render() {
+void Game::render() {
     window->clear();
 
-    window->draw(bg->getBg1());
-    window->draw(bg->getBg2());
-    window->draw(bg->getBg3());
-    window->draw(bg->getBg4());
-    window->draw(p->getSprite());
+    window->draw(background->getBackground1());
+    window->draw(background->getBackground2());
+    window->draw(background->getBackground3());
+    window->draw(background->getBackground4());
+    window->draw(player->getSprite());
 
     window->display();
 }

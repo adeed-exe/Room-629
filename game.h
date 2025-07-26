@@ -4,11 +4,14 @@
 #include "player.h"
 #include "background.h"
 
-class game {
+class Game {
 private:
     sf::RenderWindow* window;
 
     sf::Clock clock;
+
+    Player* player;
+    Background* background;
 
     void initVariables();
     void initWindow();
@@ -17,16 +20,13 @@ public:
     int frameWidth, frameHeight;
     float scale, animationSpeed;
     float playerMoveSpeed, gravity;
-    float ground, frameTimer, dt;
+    float ground, frameTimer, deltaTime;
 
     int playerJumping, playerInAir;
     sf::Vector2f playerVelocity;
 
-    player* p;
-    background* bg;
-
-    game();
-    virtual ~game();
+    Game();
+    virtual ~Game();
 
     const bool running() const;
 

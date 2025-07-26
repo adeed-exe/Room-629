@@ -2,7 +2,7 @@
 #include "player.h"
 #include "game.h"
 
-void player::initPlayer() {
+void Player::initPlayer() {
     frameTimer = 0.f;
 
     idleX = 0, idleY = 0, totalIdle = 10;
@@ -13,53 +13,53 @@ void player::initPlayer() {
         std::cout << "Player texture loaded!" << std::endl;
     }
     playerChar.setTexture(playerTexture, true);
-    playerChar.setScale({ g->scale, g->scale });
+    playerChar.setScale({ game->scale, game->scale });
     playerChar.setOrigin({ 0, 0 });
-    playerChar.setPosition({ 840, g->ground });
+    playerChar.setPosition({ 840, game->ground });
 }
 
-player::player(game* gamePtr) : g(gamePtr), playerChar(playerTexture) {
+Player::Player(Game* gamePtr) : game(gamePtr), playerChar(playerTexture) {
     initPlayer();
 }
 
-sf::Sprite& player::getSprite() {
+sf::Sprite& Player::getSprite() {
     return playerChar;
 }
 
-void player::animateIdle() {
-    frameTimer += g->dt;
-    if (frameTimer >= g->animationSpeed) {
+void Player::animateIdle() {
+    frameTimer += game->deltaTime;
+    if (frameTimer >= game->animationSpeed) {
         frameTimer = 0.f;
         playerChar.setTextureRect(
-            sf::IntRect({ idleX * g->frameWidth, idleY * g->frameHeight },
-                { g->frameWidth, g->frameHeight }));
+            sf::IntRect({ idleX * game->frameWidth, idleY * game->frameHeight },
+                { game->frameWidth, game->frameHeight }));
         idleX = (idleX + 1) % totalIdle;
     }
 }
 
-void player::animateRun() {
-    frameTimer += g->dt;
-    if (frameTimer >= g->animationSpeed) {
+void Player::animateRun() {
+    frameTimer += game->deltaTime;
+    if (frameTimer >= game->animationSpeed) {
         frameTimer = 0.f;
         playerChar.setTextureRect(
-            sf::IntRect({ runX * g->frameWidth, runY * g->frameHeight },
-                { g->frameWidth, g->frameHeight }));
+            sf::IntRect({ runX * game->frameWidth, runY * game->frameHeight },
+                { game->frameWidth, game->frameHeight }));
         runX = (runX + 1) % totalRun;
     }
 }
 
-void player::animateJump() {
-    frameTimer += g->dt;
-    if (frameTimer >= g->animationSpeed) {
+void Player::animateJump() {
+    frameTimer += game->deltaTime;
+    if (frameTimer >= game->animationSpeed) {
         frameTimer = 0.f;
         if (jumpX >= totalJump) {
-            g->playerJumping = 0;
+            game->playerJumping = 0;
             jumpX = 0;
             return;
         }
         playerChar.setTextureRect(
-            sf::IntRect({ jumpX * g->frameWidth, jumpY * g->frameHeight },
-                { g->frameWidth, g->frameHeight }));
+            sf::IntRect({ jumpX * game->frameWidth, jumpY * game->frameHeight },
+                { game->frameWidth, game->frameHeight }));
         jumpX++;
     }
 }

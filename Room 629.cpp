@@ -3,10 +3,10 @@
 
 int main() {
 	srand(static_cast<unsigned>(time(NULL)));
-	game g;
+	Game game;
 
-	while (g.running()) {
-		g.update();
-		g.render();
+	while (game.running()) {
+		game.update();
+		game.render();
 	}
 }

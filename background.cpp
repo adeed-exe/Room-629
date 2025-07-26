@@ -2,67 +2,69 @@
 #include "background.h"
 #include "game.h"
 
-void background::initBackground()
+void Background::initBackground()
 {
-    if (bg1Texture.loadFromFile("Assets/Sprites/bg1.png")) {
+    if (backgroundTexture1.loadFromFile("Assets/Sprites/bg1.png")) {
         std::cout << "Background texture 1 loaded!" << std::endl;
     }
-    bg1.setTexture(bg1Texture, true);
-    bg1.setScale({ g->scale, g->scale });
-    bg1.setPosition({ 0, 0 });
+    background1.setTexture(backgroundTexture1, true);
+    background1.setScale({ game->scale, game->scale });
+    background1.setPosition({ 0, 0 });
 
-    if (bg2Texture.loadFromFile("Assets/Sprites/bg2.png")) {
+    if (backgroundTexture2.loadFromFile("Assets/Sprites/bg2.png")) {
         std::cout << "Background texture 2 loaded!" << std::endl;
     }
-    bg2.setTexture(bg2Texture, true);
-    bg2.setScale({ g->scale, g->scale });
-    bg2.setPosition({ -960, -120 });
+    background2.setTexture(backgroundTexture2, true);
+    background2.setScale({ game->scale, game->scale });
+    background2.setPosition({ -960, -120 });
 
-    if (bg3Texture.loadFromFile("Assets/Sprites/bg3.png")) {
+    if (backgroundTexture3.loadFromFile("Assets/Sprites/bg3.png")) {
         std::cout << "Background texture 3 loaded!" << std::endl;
     }
-    bg3.setTexture(bg3Texture, true);
-    bg3.setScale({ g->scale, g->scale });
-    bg3.setPosition({ -960, -120 });
+    background3.setTexture(backgroundTexture3, true);
+    background3.setScale({ game->scale, game->scale });
+    background3.setPosition({ -960, -120 });
 
-    if (bg4Texture.loadFromFile("Assets/Sprites/bg4.png")) {
+    if (backgroundTexture4.loadFromFile("Assets/Sprites/bg4.png")) {
         std::cout << "Background texture 4 loaded!" << std::endl;
     }
-    bg4.setTexture(bg4Texture, true);
-    bg4.setScale({ g->scale, g->scale });
-    bg4.setPosition({ -960, -120 });
+    background4.setTexture(backgroundTexture4, true);
+    background4.setScale({ game->scale, game->scale });
+    background4.setPosition({ -960, -120 });
 }
 
-background::background(game* gamePtr) : g(gamePtr), bg1(bg1Texture), bg2(bg2Texture), bg3(bg3Texture), bg4(bg4Texture) {
+Background::Background(Game* gamePtr) : game(gamePtr),
+    background1(backgroundTexture1), background2(backgroundTexture2),
+        background3(backgroundTexture3), background4(backgroundTexture4) {
     initBackground();
 }
 
-sf::Sprite& background::getBg1() {
-    return bg1;
+sf::Sprite& Background::getBackground1() {
+    return background1;
 }
 
-sf::Sprite& background::getBg2() {
-    return bg2;
+sf::Sprite& Background::getBackground2() {
+    return background2;
 }
 
-sf::Sprite& background::getBg3() {
-    return bg3;
+sf::Sprite& Background::getBackground3() {
+    return background3;
 }
 
-sf::Sprite& background::getBg4() {
-    return bg4;
+sf::Sprite& Background::getBackground4() {
+    return background4;
 }
 
-void background::moveLeft() {
-    g->playerVelocity.x += g->playerMoveSpeed;
+void Background::moveLeft() {
+    game->playerVelocity.x += game->playerMoveSpeed;
 }
 
-void background::moveRight() {
-    g->playerVelocity.x -= g->playerMoveSpeed;
+void Background::moveRight() {
+    game->playerVelocity.x -= game->playerMoveSpeed;
 }
 
-void background::jump() {
-    g->playerInAir = 1;
-    g->playerJumping = 1;
-    g->playerVelocity.y = g->playerMoveSpeed;
+void Background::jump() {
+    game->playerInAir = 1;
+    game->playerJumping = 1;
+    game->playerVelocity.y = game->playerMoveSpeed;
 }
