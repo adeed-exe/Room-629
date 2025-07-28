@@ -16,9 +16,9 @@ void Player::initPlayer() {
         std::cout << "Player texture loaded!" << std::endl;
     }
     playerChar.setTexture(playerTexture, true);
-    playerChar.setScale({ game->scale, game->scale });
+    playerChar.setScale({ game->scale + 3.f, game->scale + 3.f });
     playerChar.setOrigin({ 0, 0 });
-    playerChar.setPosition({ 840, game->ground });
+    playerChar.setPosition({ 780, game->ground });
 }
 
 Player::Player(Game* gamePtr) : game(gamePtr), playerChar(playerTexture) {

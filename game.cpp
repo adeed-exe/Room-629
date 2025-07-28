@@ -7,7 +7,7 @@ void Game::initVariables() {
     frameWidth = 48, frameHeight = 48;
     scale = 5.f, animationSpeed = 0.1f;
     playerMoveSpeed = 175.f, gravity = 980.f;
-    ground = 780.f, frameTimer = 0.f;
+    ground = 684.f, frameTimer = 0.f;
 
     playerRunning = 0, playerFell = 0;
     playerCrouching = 0, isCrouchHeld = 0;
@@ -114,12 +114,12 @@ void Game::updateBackground() {
 
 void Game::movementHandler() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        player->getSprite().setScale({ -scale, scale });
+        player->getSprite().setScale({ -scale - 3.f, scale + 3.f });
         player->getSprite().setOrigin({ static_cast<float>(frameWidth), 0 });
         background->moveLeft();
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        player->getSprite().setScale({ scale, scale });
+        player->getSprite().setScale({ scale + 3.f, scale + 3.f });
         player->getSprite().setOrigin({ 0, 0 });
         background->moveRight();
     }
