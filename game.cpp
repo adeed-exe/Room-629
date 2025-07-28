@@ -17,7 +17,6 @@ void Game::initVariables() {
 
 void Game::initWindow() {
     window = new sf::RenderWindow(sf::VideoMode({ 1920, 1080 }), "Room 629", sf::Style::None);
-    window->setFramerateLimit(60);
     window->setMouseCursorVisible(false);
 }
 
@@ -47,10 +46,6 @@ void Game::pollEvents() {
 void Game::resetPlayer() {
     playerVelocity.x = 0.f;
     playerRunning = 0;
-
-    if (playerInAir) {
-        playerVelocity.y -= gravity * deltaTime;
-    }
 }
 
 void Game::updatePlayer() {
@@ -72,7 +67,7 @@ void Game::updatePlayer() {
 }
 
 void Game::resetBackground() {
-    if (background->getBackground2().getPosition().y < -120) {
+    if (background->getBackground2().getPosition().y <= -120) {
         playerInAir = 0;
         background->getBackground2().setPosition({ background->getBackground2().getPosition().x, -120.f });
     }
@@ -83,7 +78,7 @@ void Game::resetBackground() {
         background->getBackground2().setPosition({ background->getBackground2().getPosition().x + 1920, background->getBackground2().getPosition().y });
     }
 
-    if (background->getBackground3().getPosition().y < -120) {
+    if (background->getBackground3().getPosition().y <= -120) {
         playerInAir = 0;
         background->getBackground3().setPosition({ background->getBackground3().getPosition().x, -120.f });
     }
@@ -94,7 +89,7 @@ void Game::resetBackground() {
         background->getBackground3().setPosition({ background->getBackground3().getPosition().x + 1920, background->getBackground3().getPosition().y });
     }
 
-    if (background->getBackground4().getPosition().y < -120) {
+    if (background->getBackground4().getPosition().y <= -120) {
         playerInAir = 0;
         background->getBackground4().setPosition({ background->getBackground4().getPosition().x, -120.f });
     }
@@ -107,6 +102,9 @@ void Game::resetBackground() {
 }
 
 void Game::updateBackground() {
+    if (playerInAir) {
+        playerVelocity.y -= gravity * deltaTime;
+    }
     background->getBackground2().move(playerVelocity * deltaTime * 0.25f);
     background->getBackground3().move(playerVelocity * deltaTime * 0.50f);
     background->getBackground4().move(playerVelocity * deltaTime * 0.75f);
