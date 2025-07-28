@@ -6,9 +6,11 @@ void Game::initVariables() {
 
     frameWidth = 48, frameHeight = 48;
     scale = 5.f, animationSpeed = 0.1f;
-    playerMoveSpeed = 250.f, gravity = 880.f;
-    ground = 700.f, frameTimer = 0.f;
+    playerMoveSpeed = 175.f, gravity = 980.f;
+    ground = 780.f, frameTimer = 0.f;
 
+    playerRunning = 0, playerFell = 0;
+    playerCrouching = 0, isCrouchHeld = 0;
     playerJumping = 0, playerInAir = 0;
     playerVelocity.x = 0.f, playerVelocity.y = 0.f;
 }
@@ -44,6 +46,7 @@ void Game::pollEvents() {
 
 void Game::resetPlayer() {
     playerVelocity.x = 0.f;
+    playerRunning = 0;
 
     if (playerInAir) {
         playerVelocity.y -= gravity * deltaTime;
@@ -54,8 +57,14 @@ void Game::updatePlayer() {
     if (playerJumping) {
         player->animateJump();
     }
-    else if (playerVelocity.x) {
+    else if (playerCrouching) {
+        player->animateCrouch();
+    }
+    else if (playerVelocity.x && playerRunning) {
         player->animateRun();
+    }
+    else if (playerVelocity.x) {
+        player->animateWalk();
     }
     else {
         player->animateIdle();
@@ -116,6 +125,14 @@ void Game::movementHandler() {
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && !playerInAir) {
         background->jump();
+    }
+    int isCrouchPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C);
+    if (isCrouchPressed && !isCrouchHeld) {
+        playerCrouching ^= 1;
+    }
+    isCrouchHeld = isCrouchPressed;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && !playerCrouching) {
+        playerRunning = 1;
     }
 }
 

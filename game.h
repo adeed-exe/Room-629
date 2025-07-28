@@ -22,6 +22,8 @@ public:
     float playerMoveSpeed, gravity;
     float ground, frameTimer, deltaTime;
 
+    int playerRunning, playerFell;
+    int playerCrouching, isCrouchHeld;
     int playerJumping, playerInAir;
     sf::Vector2f playerVelocity;
 

@@ -14,8 +14,11 @@ private:
     float frameTimer;
 
     int idleX, idleY, totalIdle;
+    int walkX, walkY, totalWalk;
     int runX, runY, totalRun;
     int jumpX, jumpY, totalJump;
+    int crouchX, crouchY, totalCrouch;
+    int fallX, fallY, totalFall;
 
     void initPlayer();
 
@@ -23,8 +26,11 @@ public:
     Player(Game* gamePtr);
 
     void animateIdle();
+    void animateWalk();
     void animateRun();
     void animateJump();
+    void animateCrouch();
+    void animateFall();
 
     sf::Sprite& getSprite();
 };
