@@ -2,8 +2,8 @@
 #include "background.h"
 #include "game.h"
 
-void Background::initBackground()
-{
+void Background::initBackground() {
+    // Load background layers
     if (backgroundTexture1.loadFromFile("Assets/Sprites/bg1.png")) {
         std::cout << "Background texture 1 loaded!" << std::endl;
     }
@@ -34,25 +34,9 @@ void Background::initBackground()
 }
 
 Background::Background(Game* gamePtr) : game(gamePtr),
-    background1(backgroundTexture1), background2(backgroundTexture2),
-        background3(backgroundTexture3), background4(backgroundTexture4) {
+background1(backgroundTexture1), background2(backgroundTexture2),
+background3(backgroundTexture3), background4(backgroundTexture4) {
     initBackground();
-}
-
-sf::Sprite& Background::getBackground1() {
-    return background1;
-}
-
-sf::Sprite& Background::getBackground2() {
-    return background2;
-}
-
-sf::Sprite& Background::getBackground3() {
-    return background3;
-}
-
-sf::Sprite& Background::getBackground4() {
-    return background4;
 }
 
 void Background::moveLeft() {
@@ -68,3 +52,8 @@ void Background::jump() {
     game->playerJumping = 1;
     game->playerVelocity.y = game->playerMoveSpeed + 50.f;
 }
+
+sf::Sprite& Background::getBackground1() { return background1; }
+sf::Sprite& Background::getBackground2() { return background2; }
+sf::Sprite& Background::getBackground3() { return background3; }
+sf::Sprite& Background::getBackground4() { return background4; }

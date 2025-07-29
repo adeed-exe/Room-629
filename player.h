@@ -6,13 +6,12 @@ class Game;
 
 class Player {
 private:
-    Game* game;
+    Game* game; // Pointer to the main game instance
+    sf::Texture playerTexture; // Texture containing sprite sheet
 
-    sf::Texture playerTexture;
-    sf::Sprite playerChar;
+    float frameTimer; // Timer to control animation speed
 
-    float frameTimer;
-
+    // Animation frame control
     int idleX, idleY, totalIdle;
     int walkX, walkY, totalWalk;
     int runX, runY, totalRun;
@@ -20,11 +19,14 @@ private:
     int crouchX, crouchY, totalCrouch;
     int fallX, fallY, totalFall;
 
-    void initPlayer();
+    void initPlayer(); // Load texture and set initial values
 
 public:
-    Player(Game* gamePtr);
+    sf::Sprite playerChar; // Sprite representing the player
 
+    Player(Game* gamePtr);
+    
+    // Animate functions
     void animateIdle();
     void animateWalk();
     void animateRun();
@@ -32,5 +34,6 @@ public:
     void animateCrouch();
     void animateFall();
 
-    sf::Sprite& getSprite();
+    // Return the player sprite for game class
+    sf::Sprite& getPlayer();
 };

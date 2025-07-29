@@ -6,38 +6,43 @@
 
 class Game {
 private:
-    sf::RenderWindow* window;
-
-    sf::Clock clock;
-
-    Player* player;
-    Background* background;
-
-    void initVariables();
-    void initWindow();
+    void initVariables(); // Initialize member variables
+    void initWindow(); // Create window with settings
 
 public:
+    Game(); // Constructor
+    ~Game(); // Destructor
+
+    sf::RenderWindow* window; // Pointer to game window
+
+    float deltaTime; // Time between frames
+    sf::Clock dtClock; // Clock to measure deltaTime
+
+    // Player/Background instances
+    Player* player;
+    Background* background;
+    std::vector<sf::Sprite> backgrounds;
+
+    // Constants used across game
+    float scale;
+    float animationSpeed;
     int frameWidth, frameHeight;
-    float scale, animationSpeed;
-    float playerMoveSpeed, gravity;
-    float ground, frameTimer, deltaTime;
 
-    int playerRunning, playerFell;
-    int playerCrouching, isCrouchHeld;
-    int playerJumping, playerInAir;
+    float playerMoveSpeed;
+    float gravity;
+    float ground;
+
+    // Player states
     sf::Vector2f playerVelocity;
+    bool playerInAir, playerJumping;
+    bool playerRunning, playerCrouching;
+    bool isCrouchHeld;
 
-    Game();
-    virtual ~Game();
-
-    const bool running() const;
-
-    void pollEvents();
-    void resetPlayer();
-    void updatePlayer();
-    void resetBackground();
-    void updateBackground();
-    void movementHandler();
-    void update();
-    void render();
+    void resetBackground(); // Make the background loop
+    void inputHandler(); // Handle every input
+    void updatePlayer(); // Update player state and position
+    void updateBackground(); // Update background position
+    void update(); // Handle logic per frame
+    void render(); // Draw everything
+    void run(); // Runs everything
 };

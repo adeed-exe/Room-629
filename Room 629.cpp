@@ -2,11 +2,11 @@
 #include "game.h"
 
 int main() {
-	srand(static_cast<unsigned>(time(NULL)));
-	Game game;
+    srand(static_cast<unsigned>(time(NULL))); // Set random seed for rng
 
-	while (game.running()) {
-		game.update();
-		game.render();
-	}
+    // Run the game
+    Game game;
+    game.run();
+
+    return 0;
 }

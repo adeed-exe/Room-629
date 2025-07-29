@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <vector>
 #include <ctime>
 #include <time.h>
 
@@ -10,3 +11,5 @@
 #include <SFML/System.hpp>
 #include <SFML/Network.hpp>
 #include <SFML/Window.hpp>
+
+// Standard libraries and SFML core includes
