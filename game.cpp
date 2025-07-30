@@ -43,7 +43,8 @@ Game::~Game() {
 }
 
 void Game::resetBackground() {
-    for (int i = 1; i < 4; i++) {
+    // Make the background layers loop
+    for (int i = 1; i < backgrounds.size(); i++) {
         if (backgrounds[i].getPosition().y <= -120) {
             playerInAir = false;
             backgrounds[i].setPosition({ backgrounds[i].getPosition().x, -120.f });
@@ -58,17 +59,25 @@ void Game::resetBackground() {
 }
 
 void Game::inputHandler() {
+    // Toggle run
+    playerRunning = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && !playerCrouching;
+
+    // Toggle crouch
+    int isCrouchPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C);
+    if (isCrouchPressed && !isCrouchHeld) {
+        playerCrouching ^= 1;
+    }
+    isCrouchHeld = isCrouchPressed;
+
     float moveSpeed = playerMoveSpeed;
 
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && !playerCrouching)
+    if (playerRunning)
         moveSpeed *= 1.5f; // Increase speed while running
 
     if (playerCrouching)
         moveSpeed *= 0.5f; // Decrease speed while crouching
 
-    // Reset horizontal velocity
-    playerVelocity.x = 0.f;
-
+    // Move left and right
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
         player->getPlayer().setScale({ -scale - 3.f, scale + 3.f });
         player->getPlayer().setOrigin({ static_cast<float>(frameWidth), 0 });
@@ -80,24 +89,17 @@ void Game::inputHandler() {
         playerVelocity.x -= moveSpeed;
     }
 
+    // Jump
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && !playerInAir) {
         background->jump();
     }
-
-    int isCrouchPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C);
-    if (isCrouchPressed && !isCrouchHeld) {
-        playerCrouching ^= 1;
-    }
-    isCrouchHeld = isCrouchPressed;
-
-    playerRunning = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && !playerCrouching;
 }
 
 void Game::updateBackground() {
     // Move background layers at different speeds
     if (playerInAir)
         playerVelocity.y -= gravity * deltaTime;
-    for (int i = 1; i < 4; i++) {
+    for (int i = 1; i < backgrounds.size(); i++) {
         backgrounds[i].move({ playerVelocity * deltaTime * 0.25f * static_cast<float>(i)});
     }
 }
@@ -119,7 +121,7 @@ void Game::updatePlayer() {
 void Game::update() {
     deltaTime = dtClock.restart().asSeconds();
     if (deltaTime > 1.f / 120.f)
-        deltaTime = 1.f / 120.f; // Clamp to avoid large jumps
+        deltaTime = 1.f / 120.f; // Clamp to avoid large jumps at low framerates
 
     playerVelocity.x = 0;
     playerRunning = false;
@@ -133,8 +135,8 @@ void Game::update() {
 void Game::render() {
     window->clear();
 
-    for (auto& bg : backgrounds) {
-        window->draw(bg);
+    for (int i = 0; i < backgrounds.size(); i++) {
+        window->draw(backgrounds[i]);
     }
 
     window->draw(player->getPlayer());

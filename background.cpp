@@ -48,8 +48,8 @@ void Background::moveRight() {
 }
 
 void Background::jump() {
-    game->playerInAir = 1;
-    game->playerJumping = 1;
+    game->playerInAir = true;
+    game->playerJumping = true;
     game->playerVelocity.y = game->playerMoveSpeed + 50.f;
 }
 

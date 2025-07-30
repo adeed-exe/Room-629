@@ -34,6 +34,6 @@ public:
     void animateCrouch();
     void animateFall();
 
-    // Return the player sprite for game class
+    // Return the player sprite for Game class
     sf::Sprite& getPlayer();
 };
