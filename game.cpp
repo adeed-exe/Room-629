@@ -63,7 +63,7 @@ void Game::inputHandler() {
     playerRunning = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && !playerCrouching;
 
     // Toggle crouch
-    int isCrouchPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::C);
+    int isCrouchPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl);
     if (isCrouchPressed && !isCrouchHeld) {
         playerCrouching ^= 1;
     }
