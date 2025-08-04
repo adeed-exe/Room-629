@@ -19,7 +19,7 @@ void Player::initPlayer() {
     }
     playerChar.setTexture(playerTexture, true);
     playerChar.setTextureRect(sf::IntRect({ idleX * game->frameWidth, idleY * game->frameHeight }, { game->frameWidth, game->frameHeight }));
-    playerChar.setScale({ game->scale + 3.f, game->scale + 3.f });
+    playerChar.setScale({ game->scale + 2.f, game->scale + 4.f });
     playerChar.setOrigin({ 0, 0 });
     playerChar.setPosition({ 780, game->ground });
 }
@@ -60,7 +60,7 @@ void Player::animateJump() {
     if (frameTimer >= game->animationSpeed) {
         frameTimer = 0.f;
         if (jumpX >= totalJump) {
-            game->playerJumping = 0;
+            game->playerJumping = false;
             jumpX = 0;
             return;
         }

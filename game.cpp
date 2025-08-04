@@ -6,11 +6,11 @@ void Game::initVariables() {
 
     frameWidth = 48;
     frameHeight = 48;
-    scale = 5.f;
+    scale = 10.f;
     animationSpeed = 0.1f;
-    playerMoveSpeed = 250.f;
+    playerMoveSpeed = 150.f;
     gravity = 880.f;
-    ground = 684.f;
+    ground = 420.f;
 
     playerVelocity = { 0.f, 0.f };
     playerInAir = false;
@@ -18,6 +18,14 @@ void Game::initVariables() {
     playerRunning = false;
     playerCrouching = false;
     isCrouchHeld = false;
+
+    if (backgroundTexture.loadFromFile("Assets/Sprites/classroomBg.png")) {
+        std::cout << "Background texture loaded!" << std::endl;
+    }
+    background.setTexture(backgroundTexture, true);
+    background.setScale({ 1920 / 1300.f, 1920 / 1300.f });
+    background.setOrigin(background.getLocalBounds().size / 2.f);
+    background.setPosition({ 960, 540 });
 }
 
 void Game::initWindow() {
@@ -25,37 +33,21 @@ void Game::initWindow() {
     window->setFramerateLimit(120);
 }
 
-Game::Game() {
+Game::Game() : background(backgroundTexture) {
     initVariables();
     initWindow();
-    background = new Background(this);
     player = new Player(this);
-    backgrounds.push_back(background->getBackground1());
-    backgrounds.push_back(background->getBackground2());
-    backgrounds.push_back(background->getBackground3());
-    backgrounds.push_back(background->getBackground4());
+    menu = new Menu(this);
+    buttons.push_back(menu->getContinueButton());
+    buttons.push_back(menu->getNewGameButton());
+    buttons.push_back(menu->getControlsButton());
+    buttons.push_back(menu->getExitButton());
 }
 
 Game::~Game() {
     delete player;
-    delete background;
+    delete menu;
     delete window;
-}
-
-void Game::resetBackground() {
-    // Make the background layers loop
-    for (int i = 1; i < backgrounds.size(); i++) {
-        if (backgrounds[i].getPosition().y <= -120) {
-            playerInAir = false;
-            backgrounds[i].setPosition({ backgrounds[i].getPosition().x, -120.f });
-        }
-        if (backgrounds[i].getPosition().x >= 0) {
-            backgrounds[i].setPosition({ backgrounds[i].getPosition().x - 1920, backgrounds[i].getPosition().y });
-        }
-        if (backgrounds[i].getPosition().x <= -1920) {
-            backgrounds[i].setPosition({ backgrounds[i].getPosition().x + 1920, backgrounds[i].getPosition().y });
-        }
-    }
 }
 
 void Game::inputHandler() {
@@ -79,28 +71,21 @@ void Game::inputHandler() {
 
     // Move left and right
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        player->getPlayer().setScale({ -scale - 3.f, scale + 3.f });
+        player->getPlayer().setScale({ -scale - 2.f, scale + 4.f });
         player->getPlayer().setOrigin({ static_cast<float>(frameWidth), 0 });
-        playerVelocity.x += moveSpeed;
+        playerVelocity.x -= moveSpeed;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        player->getPlayer().setScale({ scale + 3.f, scale + 3.f });
+        player->getPlayer().setScale({ scale + 2.f, scale + 4.f });
         player->getPlayer().setOrigin({ 0, 0 });
-        playerVelocity.x -= moveSpeed;
+        playerVelocity.x += moveSpeed;
     }
 
     // Jump
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && !playerInAir) {
-        background->jump();
-    }
-}
-
-void Game::updateBackground() {
-    // Move background layers at different speeds
-    if (playerInAir)
-        playerVelocity.y -= gravity * deltaTime;
-    for (int i = 1; i < backgrounds.size(); i++) {
-        backgrounds[i].move({ playerVelocity * deltaTime * 0.25f * static_cast<float>(i)});
+        playerInAir = true;
+        playerJumping = true;
+        playerVelocity.y = -(playerMoveSpeed + 100.f);
     }
 }
 
@@ -126,20 +111,32 @@ void Game::update() {
     playerVelocity.x = 0;
     playerRunning = false;
 
-    resetBackground();
+    // Clamp player to ground
+    if (player->getPlayer().getPosition().y > ground) {
+        playerInAir = false;
+        player->getPlayer().setPosition({ player->getPlayer().getPosition().x, ground });
+    }
+
     inputHandler();
-    updateBackground();
+
+    if (playerInAir)
+        playerVelocity.y += gravity * deltaTime;
+
+    player->getPlayer().move(playerVelocity * deltaTime);
+
     updatePlayer();
 }
 
 void Game::render() {
     window->clear();
 
-    for (int i = 0; i < backgrounds.size(); i++) {
-        window->draw(backgrounds[i]);
-    }
+    window->draw(background);
 
     window->draw(player->getPlayer());
+
+    /*for (int i = 0; i < buttons.size(); i++) {
+        window->draw(buttons[i]);
+    }*/
 
     window->display();
 }
