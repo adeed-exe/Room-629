@@ -24,7 +24,8 @@ public:
     Player* player;
     sf::Sprite background;
     Menu* menu;
-    std::vector<sf::Sprite> buttons;
+    std::vector<sf::Text> mainMenuText;
+    std::vector<sf::Text> controlsMenuText;
 
     // Constants used across game
     float scale;
@@ -35,12 +36,18 @@ public:
     float gravity;
     float ground;
 
+    // Game states
+    bool isInMenu, isInControlsMenu;
+    bool isMouseHeld;
+
     // Player states
     sf::Vector2f playerVelocity;
     bool playerInAir, playerJumping;
     bool playerRunning, playerCrouching;
     bool isCrouchHeld;
 
+    void mainMenu();
+    void controlsMenu();
     void inputHandler(); // Handle every input
     void updatePlayer(); // Update player state and position
     void update(); // Handle logic per frame
