@@ -21,7 +21,7 @@ void Player::initPlayer() {
     playerChar.setTextureRect(sf::IntRect({ idleX * game->frameWidth, idleY * game->frameHeight }, { game->frameWidth, game->frameHeight }));
     playerChar.setScale({ game->scale + 2.f, game->scale + 2.f });
     playerChar.setOrigin({ 0, 0 });
-    playerChar.setPosition({ 30, game->ground });
+    playerChar.setPosition({ 1920/2, game->ground });
 }
 
 Player::Player(Game* gamePtr) : game(gamePtr), playerChar(playerTexture) {

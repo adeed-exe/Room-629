@@ -3,6 +3,7 @@
 #include "pch.h"
 #include "player.h"
 #include "menu.h"
+#include "ViewSystem.h"
 
 class Game {
 private:
@@ -10,12 +11,15 @@ private:
 
     void initVariables(); // Initialize member variables
     void initWindow(); // Create window with settings
+    void initViewSystem(); // initialize the viewer 
 
 public:
     Game(); // Constructor
     ~Game(); // Destructor
 
     sf::RenderWindow* window; // Pointer to game window
+
+    ViewSystem* viewSystem; // view system for the sidescroller
 
     float deltaTime; // Time between frames
     sf::Clock dtClock; // Clock to measure deltaTime

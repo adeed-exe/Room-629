@@ -1,16 +1,18 @@
 #include "pch.h"
 #include "game.h"
 
+//private
+
 void Game::initVariables() {
     window = nullptr;
 
     frameWidth = 48;
     frameHeight = 48;
-    scale = 10.f;
-    animationSpeed = 0.1f;
+    scale = 2.f;
+    animationSpeed = 0.05f;
     playerMoveSpeed = 150.f;
     gravity = 880.f;
-    ground = 482.f;
+    ground = 145.f;
 
     isInMenu = true;
     isInControlsMenu = false;
@@ -23,24 +25,35 @@ void Game::initVariables() {
     playerCrouching = false;
     isCrouchHeld = false;
 
-    if (backgroundTexture.loadFromFile("Assets/Sprites/classroomBg.png")) {
+    if (backgroundTexture.loadFromFile("Assets/Sprites/Room629_BG_01.png")) {
         std::cout << "Background texture loaded!" << std::endl;
     }
     background.setTexture(backgroundTexture, true);
-    background.setScale({ 1920 / 1300.f, 1920 / 1300.f });
+    //background.setScale({ 1920 / 1920.f, 960 / 300.f });
     background.setColor(sf::Color(255, 255, 255, 125));
     background.setOrigin(background.getLocalBounds().size / 2.f);
-    background.setPosition({ 960, 540 });
+
+    //now set to the top of the screen for easier calculation
+    background.setPosition({ 960.f, 150.f});
 }
 
 void Game::initWindow() {
     window = new sf::RenderWindow(sf::VideoMode({ 1920, 1080 }), "Room 629", sf::Style::None);
-    window->setFramerateLimit(120);
+    window->setFramerateLimit(60);
 }
+
+void Game::initViewSystem()
+{
+    viewSystem = new ViewSystem( 1920.f, 300.f, 1920.f, 300.f);
+}
+
+
+//public
 
 Game::Game() : background(backgroundTexture) {
     initVariables();
     initWindow();
+    initViewSystem();
     player = new Player(this);
     menu = new Menu(this);
     mainMenuText = menu->getMainMenuText();
@@ -51,6 +64,7 @@ Game::~Game() {
     delete player;
     delete menu;
     delete window;
+    delete viewSystem;
 }
 
 void Game::mainMenu() {
@@ -116,10 +130,10 @@ void Game::inputHandler() {
     float moveSpeed = playerMoveSpeed;
 
     if (playerRunning)
-        moveSpeed *= 1.5f; // Increase speed while running
+        moveSpeed *= 2.f; // Increase speed while running
 
     if (playerCrouching)
-        moveSpeed *= 0.5f; // Decrease speed while crouching
+        moveSpeed *= 1.f; // Decrease speed while crouching
 
     // Move left and right
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
@@ -170,32 +184,44 @@ void Game::update() {
     }
 
     inputHandler();
-
+     
     if (playerInAir)
         playerVelocity.y += gravity * deltaTime;
 
     player->getPlayer().move(playerVelocity * deltaTime);
 
     updatePlayer();
+
+    viewSystem->update(player->getPlayer().getPosition());
 }
 
 void Game::render() {
     window->clear();
 
-    window->draw(background);
+    window->draw(background); //draws the entire BackGround
 
-    if (isInMenu) {
-        for (int i = 0; i < mainMenuText.size(); i++) {
-            window->draw(mainMenuText[i]);
-        }
-    }
-    else if (isInControlsMenu) {
-        for (int i = 0; i < controlsMenuText.size(); i++) {
-            window->draw(controlsMenuText[i]);
-        }
-    }
-    else {
+    //--------IN GAME---------
+    if (!isInMenu && !isInControlsMenu) {
+
+        window->setView(viewSystem->getView());//a view of a portion of the background
         window->draw(player->getPlayer());
+        std :: cout << " Player Position x = " << player->getPlayer().getPosition().x << ", y = " << player->getPlayer().getPosition().y << std:: endl;
+    }
+    
+    //------MAINMENU UI---------
+    //window->setView(window->getDefaultView()); //setting the view back to the entire screen
+    else {
+        window->setView(window->getDefaultView()); //setting the view back to the entire screen
+        if (isInMenu) {
+            for (int i = 0; i < mainMenuText.size(); i++) {
+                window->draw(mainMenuText[i]);
+            }
+        }
+        else if (isInControlsMenu) {
+            for (int i = 0; i < controlsMenuText.size(); i++) {
+                window->draw(controlsMenuText[i]);
+            }
+        }
     }
 
     window->display();

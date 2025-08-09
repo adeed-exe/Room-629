@@ -24,3 +24,7 @@ public:
     std::vector<sf::Text> getMainMenuText();
     std::vector<sf::Text> getControlsMenuText();
 };
+
+class menu
+{
+};
