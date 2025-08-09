@@ -123,7 +123,12 @@ void Game::inputHandler() {
     // Toggle crouch
     int isCrouchPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl);
     if (isCrouchPressed && !isCrouchHeld) {
-        playerCrouching ^= 1;
+        if (playerCrouching) {
+            playerCrouching = false;
+        }
+        else {
+            playerCrouching = true;
+        }
     }
     isCrouchHeld = isCrouchPressed;
 
@@ -134,6 +139,14 @@ void Game::inputHandler() {
 
     if (playerCrouching)
         moveSpeed *= 1.f; // Decrease speed while crouching
+
+    if (playerRunning) {
+        moveSpeed *= 1.5f; // Increase speed while running
+    }
+
+    if (playerCrouching) {
+        moveSpeed *= 0.5f; // Decrease speed while crouching
+    }
 
     // Move left and right
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
@@ -157,22 +170,28 @@ void Game::inputHandler() {
 
 void Game::updatePlayer() {
     // Animate depending on state
-    if (playerJumping)
+    if (playerJumping) {
         player->animateJump();
-    else if (playerCrouching)
+    }
+    else if (playerCrouching) {
         player->animateCrouch();
-    else if (playerVelocity.x && playerRunning)
+    }
+    else if (playerVelocity.x && playerRunning) {
         player->animateRun();
-    else if (playerVelocity.x)
+    }
+    else if (playerVelocity.x) {
         player->animateWalk();
-    else
+    }
+    else {
         player->animateIdle();
+    }
 }
 
 void Game::update() {
     deltaTime = dtClock.restart().asSeconds();
-    if (deltaTime > 1.f / 120.f)
+    if (deltaTime > 1.f / 120.f) {
         deltaTime = 1.f / 120.f; // Clamp to avoid large jumps at low framerates
+    }
 
     playerVelocity.x = 0;
     playerRunning = false;
@@ -184,9 +203,10 @@ void Game::update() {
     }
 
     inputHandler();
-     
-    if (playerInAir)
+
+    if (playerInAir) {
         playerVelocity.y += gravity * deltaTime;
+    }
 
     player->getPlayer().move(playerVelocity * deltaTime);
 

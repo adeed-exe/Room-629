@@ -50,8 +50,8 @@ public:
     bool playerRunning, playerCrouching;
     bool isCrouchHeld;
 
-    void mainMenu();
-    void controlsMenu();
+    void mainMenu(); // Display and handle the main menu
+    void controlsMenu(); // Display and handle the controls menu
     void inputHandler(); // Handle every input
     void updatePlayer(); // Update player state and position
     void update(); // Handle logic per frame
