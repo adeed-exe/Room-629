@@ -1,15 +1,14 @@
 #include "pch.h"
 #include "game.h"
 
-//private
-
+// Private
 void Game::initVariables() {
     window = nullptr;
 
     frameWidth = 48;
     frameHeight = 48;
     scale = 2.f;
-    animationSpeed = 0.05f;
+    animationSpeed = 0.1f;
     playerMoveSpeed = 150.f;
     gravity = 880.f;
     ground = 145.f;
@@ -39,17 +38,14 @@ void Game::initVariables() {
 
 void Game::initWindow() {
     window = new sf::RenderWindow(sf::VideoMode({ 1920, 1080 }), "Room 629", sf::Style::None);
-    window->setFramerateLimit(60);
+    window->setVerticalSyncEnabled(true);
 }
 
-void Game::initViewSystem()
-{
+void Game::initViewSystem() {
     viewSystem = new ViewSystem( 1920.f, 300.f, 1920.f, 300.f);
 }
 
-
-//public
-
+// Public
 Game::Game() : background(backgroundTexture) {
     initVariables();
     initWindow();
@@ -134,12 +130,6 @@ void Game::inputHandler() {
 
     float moveSpeed = playerMoveSpeed;
 
-    if (playerRunning)
-        moveSpeed *= 2.f; // Increase speed while running
-
-    if (playerCrouching)
-        moveSpeed *= 1.f; // Decrease speed while crouching
-
     if (playerRunning) {
         moveSpeed *= 1.5f; // Increase speed while running
     }
@@ -189,9 +179,6 @@ void Game::updatePlayer() {
 
 void Game::update() {
     deltaTime = dtClock.restart().asSeconds();
-    if (deltaTime > 1.f / 120.f) {
-        deltaTime = 1.f / 120.f; // Clamp to avoid large jumps at low framerates
-    }
 
     playerVelocity.x = 0;
     playerRunning = false;
@@ -218,20 +205,17 @@ void Game::update() {
 void Game::render() {
     window->clear();
 
-    window->draw(background); //draws the entire BackGround
+    window->draw(background); // Draws the entire BackGround
 
-    //--------IN GAME---------
+    // -------- IN GAME ---------
     if (!isInMenu && !isInControlsMenu) {
-
-        window->setView(viewSystem->getView());//a view of a portion of the background
+        window->setView(viewSystem->getView()); // A view of a portion of the background
         window->draw(player->getPlayer());
-        std :: cout << " Player Position x = " << player->getPlayer().getPosition().x << ", y = " << player->getPlayer().getPosition().y << std:: endl;
     }
-    
-    //------MAINMENU UI---------
-    //window->setView(window->getDefaultView()); //setting the view back to the entire screen
+
+    // ------ MAINMENU UI ---------
     else {
-        window->setView(window->getDefaultView()); //setting the view back to the entire screen
+        window->setView(window->getDefaultView()); // Setting the view back to the entire screen
         if (isInMenu) {
             for (int i = 0; i < mainMenuText.size(); i++) {
                 window->draw(mainMenuText[i]);

@@ -19,7 +19,7 @@ public:
 
     sf::RenderWindow* window; // Pointer to game window
 
-    ViewSystem* viewSystem; // view system for the sidescroller
+    ViewSystem* viewSystem; // View system for the sidescroller
 
     float deltaTime; // Time between frames
     sf::Clock dtClock; // Clock to measure deltaTime
