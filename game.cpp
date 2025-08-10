@@ -39,7 +39,7 @@ void Game::initVariables() {
 
 void Game::initWindow() {
     window = new sf::RenderWindow(sf::VideoMode({ 1920, 1080 }), "Room 629", sf::Style::None);
-    window->setFramerateLimit(60);
+    window->setFramerateLimit(120);
 }
 
 void Game::initViewSystem()
