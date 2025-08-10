@@ -92,4 +92,4 @@ void Player::animateFall() {
     }
 }
 
-sf::Sprite& Player::getPlayer() { return playerChar; };
+sf::Sprite& Player::getPlayer() { return playerChar; }
