@@ -185,8 +185,9 @@ void Game::update() {
     playerRunning = false;
 
     // Clamp player to ground
-    if (player->getPlayer().getPosition().y > ground) {
+    if (player->getPlayer().getPosition().y > ground - 1) {
         playerInAir = false;
+        playerVelocity.y = 0;
         player->getPlayer().setPosition({ player->getPlayer().getPosition().x, ground });
     }
 
