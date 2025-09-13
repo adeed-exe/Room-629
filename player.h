@@ -8,7 +8,14 @@ class Player {
 private:
     Game* game; // Pointer to the main game instance
 
-    sf::Texture playerTexture; // Texture containing sprite sheet
+
+    //textures for the player
+    sf::Texture playerTexture;
+    sf::Texture idleTexture;
+    sf::Texture walkTexture;
+    sf::Texture runTexture;
+    sf::Texture jumpTexture;
+    sf::Texture crouchTexture;
 
     float frameTimer; // Timer to control animation speed
 

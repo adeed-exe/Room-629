@@ -49,6 +49,7 @@ public:
     bool playerInAir, playerJumping;
     bool playerRunning, playerCrouching;
     bool isCrouchHeld;
+    bool isEscapeHeld;
 
     void mainMenu(); // Display and handle the main menu
     void controlsMenu(); // Display and handle the controls menu

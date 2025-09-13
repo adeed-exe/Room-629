@@ -5,13 +5,13 @@
 void Game::initVariables() {
     window = nullptr;
 
-    frameWidth = 48;
-    frameHeight = 48;
-    scale = 2.f;
-    animationSpeed = 0.1f;
+    frameWidth = 43;
+    frameHeight = 43;
+    scale = 4.f;
+    animationSpeed = 0.08f;
     playerMoveSpeed = 150.f;
     gravity = 880.f;
-    ground = 145.f;
+    ground = 180.f;
 
     isInMenu = true;
     isInControlsMenu = false;
@@ -23,6 +23,7 @@ void Game::initVariables() {
     playerRunning = false;
     playerCrouching = false;
     isCrouchHeld = false;
+    isEscapeHeld = false;
 
     if (backgroundTexture.loadFromFile("Assets/Sprites/Room629_BG_01.png")) {
         std::cout << "Background texture loaded!" << std::endl;
@@ -38,7 +39,6 @@ void Game::initVariables() {
 
 void Game::initWindow() {
     window = new sf::RenderWindow(sf::VideoMode({ 1920, 1080 }), "Room 629", sf::Style::None);
-    window->setFramerateLimit(120);
     window->setVerticalSyncEnabled(true);
 }
 
@@ -65,6 +65,7 @@ Game::~Game() {
 }
 
 void Game::mainMenu() {
+
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
     for (int i = 0; i < mainMenuText.size(); i++) {
         if (mainMenuText[i].getGlobalBounds().contains(mousePos)) {
@@ -141,13 +142,11 @@ void Game::inputHandler() {
 
     // Move left and right
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
-        player->getPlayer().setScale({ -scale - 2.f, scale + 2.f });
-        player->getPlayer().setOrigin({ static_cast<float>(frameWidth), 0 });
+        player->getPlayer().setScale({ -scale, scale });
         playerVelocity.x -= moveSpeed;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
-        player->getPlayer().setScale({ scale + 2.f, scale + 2.f });
-        player->getPlayer().setOrigin({ 0, 0 });
+        player->getPlayer().setScale({ scale, scale });
         playerVelocity.x += moveSpeed;
     }
 
@@ -240,10 +239,23 @@ void Game::run() {
             }
 
             // Toggle main menu
-            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && !isInMenu && !isInControlsMenu) {
-                isInMenu = true;
-                background.setColor(sf::Color(255, 255, 255, 125)); // Darken background while in menu
+            bool isEscapePressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape);
+            if (isEscapePressed && !isEscapeHeld) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && !isInMenu && !isInControlsMenu) {
+                    isInMenu = true;
+                    background.setColor(sf::Color(255, 255, 255, 125)); // Darken background while in menu
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && !isInMenu && isInControlsMenu) {
+                    isInControlsMenu = false;
+                    isInMenu = true;
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && isInMenu) {
+                    isInMenu = false;
+                    isInControlsMenu = false;
+                    background.setColor(sf::Color(255, 255, 255, 255)); // Revert darkening the background
+                }
             }
+            isEscapeHeld = isEscapePressed;
         }
         if (isInMenu) {
             mainMenu();
