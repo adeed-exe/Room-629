@@ -24,9 +24,9 @@ void Menu::initMenu() {
     }
 
     float startY2 = 350.f;
-    std::vector<std::string> controlsMenuLabels = { "Move Left : A", "Move Right : D", "Jump : Space", "Back" };
+    std::vector<std::string> controlsMenuLabels = { "Move Left : A", "Move Right : D", "Jump : Space", "Sprint : Hold Shift", "Back"};
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 5; i++) {
         text.setFont(font);
         text.setString(controlsMenuLabels[i]);
         text.setCharacterSize(50);
@@ -34,7 +34,7 @@ void Menu::initMenu() {
         text.setOutlineColor(sf::Color::Black);
         text.setOutlineThickness(3.f);
         text.setOrigin(text.getGlobalBounds().size / 2.f);
-        text.setPosition({ 960, startY + i * spacing });
+        text.setPosition({ 960, startY - 50 + i * spacing });
         controlsMenuText.push_back(text);
     }
 }

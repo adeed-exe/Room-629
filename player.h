@@ -15,17 +15,14 @@ private:
     sf::Texture walkTexture;
     sf::Texture runTexture;
     sf::Texture jumpTexture;
-    sf::Texture crouchTexture;
 
     float frameTimer; // Timer to control animation speed
 
     // Animation frame control
-    int idleX, idleY, totalIdle;
-    int walkX, walkY, totalWalk;
-    int runX, runY, totalRun;
-    int jumpX, jumpY, totalJump;
-    int crouchX, crouchY, totalCrouch;
-    int fallX, fallY, totalFall;
+    int idleX, totalIdle;
+    int walkX, totalWalk;
+    int runX, totalRun;
+    int jumpX, totalJump;
 
     void initPlayer(); // Load texture and set initial values
 
@@ -39,8 +36,6 @@ public:
     void animateWalk();
     void animateRun();
     void animateJump();
-    void animateCrouch();
-    void animateFall();
 
     // Return the player sprite for Game class
     sf::Sprite& getPlayer();

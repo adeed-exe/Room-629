@@ -65,11 +65,10 @@ Game::~Game() {
 }
 
 void Game::mainMenu() {
-
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
     for (int i = 0; i < mainMenuText.size(); i++) {
         if (mainMenuText[i].getGlobalBounds().contains(mousePos)) {
-            mainMenuText[i].setFillColor(sf::Color(200, 200, 200)); // Darken button while hovering
+            mainMenuText[i].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
 
             int isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
             if (isMousePressed && !isMouseHeld) {
@@ -98,8 +97,8 @@ void Game::mainMenu() {
 
 void Game::controlsMenu() {
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
-    if (controlsMenuText[3].getGlobalBounds().contains(mousePos)) {
-        controlsMenuText[3].setFillColor(sf::Color(200, 200, 200)); // Darken button while hovering
+    if (controlsMenuText[4].getGlobalBounds().contains(mousePos)) {
+        controlsMenuText[4].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
 
         int isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
         if (isMousePressed && !isMouseHeld) {
@@ -110,7 +109,7 @@ void Game::controlsMenu() {
         isMouseHeld = isMousePressed;
     }
     else {
-        controlsMenuText[3].setFillColor(sf::Color(255, 255, 255));
+        controlsMenuText[4].setFillColor(sf::Color(255, 255, 255));
     }
 }
 
