@@ -58,4 +58,5 @@ public:
     void update(); // Handle logic per frame
     void render(); // Draw everything
     void run(); // Runs everything
+    void debug(); // Debugging shenanigans
 };

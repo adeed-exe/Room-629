@@ -118,34 +118,18 @@ void Game::inputHandler() {
     // Toggle run
     playerRunning = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && !playerCrouching;
 
-    // Toggle crouch
-    int isCrouchPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl);
-    if (isCrouchPressed && !isCrouchHeld) {
-        if (playerCrouching) {
-            playerCrouching = false;
-        }
-        else {
-            playerCrouching = true;
-        }
-    }
-    isCrouchHeld = isCrouchPressed;
-
     float moveSpeed = playerMoveSpeed;
 
     if (playerRunning) {
         moveSpeed *= 2.0f; // Increase speed while running
     }
 
-    if (playerCrouching) {
-        moveSpeed *= 0.5f; // Decrease speed while crouching
-    }
-
     // Move left and right
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) && player->getPlayer().getPosition().x >= 60) {
         player->getPlayer().setScale({ -scale, scale });
         playerVelocity.x -= moveSpeed;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D)) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) && player->getPlayer().getPosition().x <= 1860) {
         player->getPlayer().setScale({ scale, scale });
         playerVelocity.x += moveSpeed;
     }
@@ -162,9 +146,6 @@ void Game::updatePlayer() {
     // Animate depending on state
     if (playerJumping) {
         player->animateJump();
-    }
-    else if (playerCrouching) {
-        player->animateCrouch();
     }
     else if (playerVelocity.x && playerRunning) {
         player->animateRun();
@@ -268,5 +249,10 @@ void Game::run() {
             update();
         }
         render();
+        debug();
     }
+}
+
+void Game::debug() {
+    std::cout << "Player position : ( " << player->getPlayer().getPosition().x << ", " << player->getPlayer().getPosition().y << " )" << std::endl;
 }

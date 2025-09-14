@@ -6,12 +6,10 @@ void Player::initPlayer() {
     frameTimer = 0.f;
 
     // Frame index and row values for each animation type
-    idleX = 0; idleY = 0; totalIdle = 8;
-    walkX = 0; walkY = 1; totalWalk = 8;
-    runX = 0; runY = 2; totalRun = 8;
-    jumpX = 0; jumpY = 3; totalJump = 9;
-    crouchX = 0; crouchY = 4; totalCrouch = 6;
-    fallX = 0; fallY = 5; totalFall = 7;
+    idleX = 0; totalIdle = 8;
+    walkX = 0; totalWalk = 8;
+    runX = 0; totalRun = 8;
+    jumpX = 0; totalJump = 5;
 
     // Load sprite sheet
     if (idleTexture.loadFromFile("Assets/Sprites/idle_8.png")) {
@@ -25,16 +23,7 @@ void Player::initPlayer() {
     }
     if (jumpTexture.loadFromFile("Assets/Sprites/jump_9.png")) {
         std::cout << "Player texture [JUMP_9] loaded!" << std::endl;
-    }/*
-    if (playerTexture.loadFromFile("Assets/Sprites/char_spritesheet.png")) {
-        std::cout << "Player texture loaded!" << std::endl;
     }
-    if (playerTexture.loadFromFile("Assets/Sprites/char_spritesheet.png")) {
-        std::cout << "Player texture loaded!" << std::endl;
-    }
-    if (playerTexture.loadFromFile("Assets/Sprites/char_spritesheet.png")) {
-        std::cout << "Player texture loaded!" << std::endl;
-    }*/
 
     playerChar.setTexture(playerTexture, true);
     playerChar.setTextureRect(sf::IntRect({ idleX * game->frameWidth, 0 }, { game->frameWidth, game->frameHeight }));
@@ -89,31 +78,9 @@ void Player::animateJump() {
             jumpX = 0;
             return;
         }
-        playerChar.setTextureRect(sf::IntRect({ jumpX * game->frameWidth, jumpY * game->frameHeight }, { game->frameWidth, game->frameHeight }));
+        playerChar.setTexture(jumpTexture);
+        playerChar.setTextureRect(sf::IntRect({ jumpX * game->frameWidth, 0 * game->frameHeight }, { game->frameWidth, game->frameHeight }));
         jumpX++;
-    }
-}
-
-void Player::animateCrouch() {
-    if (game->playerVelocity.x) {
-        frameTimer += game->deltaTime;
-        if (frameTimer >= game->animationSpeed) {
-            frameTimer = 0.f;
-            playerChar.setTextureRect(sf::IntRect({ crouchX * game->frameWidth, crouchY * game->frameHeight }, { game->frameWidth, game->frameHeight }));
-            crouchX = (crouchX + 1) % totalCrouch;
-        }
-    }
-    else {
-        playerChar.setTextureRect(sf::IntRect({ 1 * game->frameWidth, crouchY * game->frameHeight }, { game->frameWidth, game->frameHeight }));
-    }
-}
-
-void Player::animateFall() {
-    frameTimer += game->deltaTime;
-    if (frameTimer >= game->animationSpeed) {
-        frameTimer = 0.f;
-        playerChar.setTextureRect(sf::IntRect({ fallX * game->frameWidth, fallY * game->frameHeight }, { game->frameWidth, game->frameHeight }));
-        fallX = (fallX + 1) % totalFall;
     }
 }
 
