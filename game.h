@@ -45,11 +45,9 @@ public:
 
     sf::Vector2f playerVelocity;
     bool playerInAir, playerJumping;
-    bool playerRunning, playerCrouching;
-    bool isCrouchHeld;
+    bool playerRunning;
     bool isEscapeHeld;
 
-<<<<<<< Updated upstream
     void mainMenu(); // Display and handle the main menu
     void controlsMenu(); // Display and handle the controls menu
     void inputHandler(); // Handle every input
@@ -59,13 +57,3 @@ public:
     void run(); // Runs everything
     void debug(); // Debugging shenanigans
 };
-=======
-    void mainMenu();
-    void controlsMenu();
-    void inputHandler();
-    void updatePlayer();
-    void update();
-    void render();
-    void run();
-};
->>>>>>> Stashed changes

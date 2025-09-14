@@ -8,7 +8,6 @@ class Player {
 private:
     Game* game; // Pointer to the main game instance
 
-
     //textures for the player
     sf::Texture playerTexture;
     sf::Texture idleTexture;

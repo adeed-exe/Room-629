@@ -14,22 +14,26 @@ void HUD::initHUD() {
     fatigue = 0.f;
 
     // Stamina bar
-    staminaBarBack.setSize({ 300.f, 20.f });
+    staminaBarBack.setSize({ 130.f, 10.f });
+    staminaBarBack.setOrigin(staminaBarBack.getLocalBounds().size / 2.f);
     staminaBarBack.setFillColor(sf::Color(50, 50, 50, 200));
-    staminaBarBack.setPosition(sf::Vector2f(50.f, 50.f));
+    staminaBarBack.setPosition({ game->player->getPlayer().getPosition().x, game->player->getPlayer().getPosition().y - 130 });
 
-    staminaBarFront.setSize({ 300.f, 20.f });
+    staminaBarFront.setSize({ 130.f, 10.f });
+    staminaBarFront.setOrigin(staminaBarBack.getLocalBounds().size / 2.f);
     staminaBarFront.setFillColor(sf::Color::Green);
-    staminaBarFront.setPosition(sf::Vector2f(50.f, 50.f));
+    staminaBarFront.setPosition({ game->player->getPlayer().getPosition().x, game->player->getPlayer().getPosition().y - 130 });
 
     // Fatigue bar
-    fatigueBarBack.setSize({ 300.f, 20.f });
+    fatigueBarBack.setSize({ 130.f, 10.f });
+    fatigueBarBack.setOrigin(staminaBarBack.getLocalBounds().size / 2.f);
     fatigueBarBack.setFillColor(sf::Color(50, 50, 50, 200));
-    fatigueBarBack.setPosition(sf::Vector2f(50.f, 80.f));
+    fatigueBarBack.setPosition({ game->player->getPlayer().getPosition().x, game->player->getPlayer().getPosition().y - 115 });
 
-    fatigueBarFront.setSize({ 300.f, 20.f });
+    fatigueBarFront.setSize({ 130.f, 10.f });
+    fatigueBarFront.setOrigin(staminaBarBack.getLocalBounds().size / 2.f);
     fatigueBarFront.setFillColor(sf::Color::Red);
-    fatigueBarFront.setPosition(sf::Vector2f(50.f, 50.f));
+    fatigueBarFront.setPosition({ game->player->getPlayer().getPosition().x, game->player->getPlayer().getPosition().y - 115 });
 
     // Subtitle
     subtitleText.setFont(font);
@@ -44,7 +48,7 @@ HUD::HUD(Game* gamePtr) : game(gamePtr), subtitleText(font, "", 0) {
     initHUD();
 }
 
-void HUD::update(float deltaTime, bool isRunning, bool isCrouching) {
+void HUD::update(float deltaTime, bool isRunning) {
     // Handle stamina logic
     if (isRunning && stamina > 0.f) {
         stamina -= 30.f * deltaTime; // drain faster while running
@@ -66,8 +70,14 @@ void HUD::update(float deltaTime, bool isRunning, bool isCrouching) {
     }
 
     // Update bar sizes
-    staminaBarFront.setSize({ (stamina / maxStamina) * 300.f, 20.f });
-    fatigueBarFront.setSize({ (fatigue / maxFatigue) * 300.f, 20.f });
+    staminaBarFront.setSize({ (stamina / maxStamina) * 130.f, 10.f });
+    fatigueBarFront.setSize({ (fatigue / maxFatigue) * 130.f, 10.f });
+
+    staminaBarBack.move(game->playerVelocity * game->deltaTime);
+    staminaBarFront.move(game->playerVelocity * game->deltaTime);
+    fatigueBarBack.move(game->playerVelocity * game->deltaTime);
+    fatigueBarFront.move(game->playerVelocity * game->deltaTime);
+    subtitleText.move(game->playerVelocity * game->deltaTime);
 }
 
 void HUD::render(sf::RenderWindow& window) {
