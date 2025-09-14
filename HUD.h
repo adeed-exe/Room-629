@@ -37,4 +37,6 @@ public:
     void render(sf::RenderWindow& window);
 
     void setSubtitle(const std::string& text);
+
+    sf::RectangleShape& getHud();
 };

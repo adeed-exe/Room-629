@@ -174,7 +174,7 @@ void Game::update() {
 
     viewSystem->update(player->getPlayer().getPosition());
 
-    hud->update(deltaTime, playerRunning);
+    hud->update(deltaTime, playerRunning && playerVelocity.x);
 }
 
 void Game::render() {
@@ -244,4 +244,5 @@ void Game::run() {
 }
 void Game::debug() {
     std::cout << "Player position : ( " << player->getPlayer().getPosition().x << ", " << player->getPlayer().getPosition().y << " )" << std::endl;
+    std::cout << "HUD position : ( " << hud->getHud().getPosition().x << ", " << hud->getHud().getPosition().y << " )" << std::endl;
 }
