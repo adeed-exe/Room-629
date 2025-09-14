@@ -22,12 +22,12 @@ void ViewSystem::update(const sf::Vector2f& targetPos) {
     float halfWidth = viewWidth / 2.f;
     float halfHeight = viewHeight / 2.f;
 
-    if (center.x < halfWidth - 60) center.x = halfWidth - 60;
+    if (center.x < halfWidth + 35) center.x = halfWidth + 35;
     if (center.y < halfHeight) center.y = halfHeight;
-    if (center.x > levelWidth - halfWidth - 130) center.x = levelWidth - halfWidth - 130;
+    if (center.x > levelWidth - halfWidth - 35) center.x = levelWidth - halfWidth - 35;
     if (center.y > levelHeight - halfHeight) center.y = levelHeight - halfHeight;
 
-    view.setCenter(sf::Vector2f({ center.x + 95, center.y }));
+    view.setCenter(sf::Vector2f({ center.x, center.y }));
 }
 
 const sf::View& ViewSystem::getView() const {

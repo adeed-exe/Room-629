@@ -133,7 +133,7 @@ void Game::inputHandler() {
     float moveSpeed = playerMoveSpeed;
 
     if (playerRunning) {
-        moveSpeed *= 1.5f; // Increase speed while running
+        moveSpeed *= 2.0f; // Increase speed while running
     }
 
     if (playerCrouching) {
