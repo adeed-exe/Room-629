@@ -4,34 +4,34 @@
 #include "player.h"
 #include "menu.h"
 #include "ViewSystem.h"
+#include "hud.h"
 
 class Game {
 private:
     sf::Texture backgroundTexture;
 
-    void initVariables(); // Initialize member variables
-    void initWindow(); // Create window with settings
-    void initViewSystem(); // initialize the viewer 
+    void initVariables();
+    void initWindow();
+    void initViewSystem();
 
 public:
-    Game(); // Constructor
-    ~Game(); // Destructor
+    Game();
+    ~Game();
 
-    sf::RenderWindow* window; // Pointer to game window
+    sf::RenderWindow* window;
+    ViewSystem* viewSystem;
 
-    ViewSystem* viewSystem; // View system for the sidescroller
+    float deltaTime;
+    sf::Clock dtClock;
 
-    float deltaTime; // Time between frames
-    sf::Clock dtClock; // Clock to measure deltaTime
-
-    // Player/Background/Menu instances
     Player* player;
     sf::Sprite background;
     Menu* menu;
+    HUD* hud; 
+
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;
 
-    // Constants used across game
     float scale;
     float animationSpeed;
     int frameWidth, frameHeight;
@@ -40,17 +40,16 @@ public:
     float gravity;
     float ground;
 
-    // Game states
     bool isInMenu, isInControlsMenu;
     bool isMouseHeld;
 
-    // Player states
     sf::Vector2f playerVelocity;
     bool playerInAir, playerJumping;
     bool playerRunning, playerCrouching;
     bool isCrouchHeld;
     bool isEscapeHeld;
 
+<<<<<<< Updated upstream
     void mainMenu(); // Display and handle the main menu
     void controlsMenu(); // Display and handle the controls menu
     void inputHandler(); // Handle every input
@@ -60,3 +59,13 @@ public:
     void run(); // Runs everything
     void debug(); // Debugging shenanigans
 };
+=======
+    void mainMenu();
+    void controlsMenu();
+    void inputHandler();
+    void updatePlayer();
+    void update();
+    void render();
+    void run();
+};
+>>>>>>> Stashed changes

@@ -39,7 +39,7 @@ void Menu::initMenu() {
     }
 }
 
-Menu::Menu(Game* gamePtr) : game(gamePtr), text(font, "", 0.f) {
+Menu::Menu(Game* gamePtr) : game(gamePtr), text(font, "", 0) {
     initMenu();
 }
 

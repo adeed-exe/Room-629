@@ -29,21 +29,20 @@ void Game::initVariables() {
         std::cout << "Background texture loaded!" << std::endl;
     }
     background.setTexture(backgroundTexture, true);
-    //background.setScale({ 1920 / 1920.f, 960 / 300.f });
     background.setColor(sf::Color(255, 255, 255, 125));
     background.setOrigin(background.getLocalBounds().size / 2.f);
 
-    //now set to the top of the screen for easier calculation
-    background.setPosition({ 960.f, 150.f});
+    background.setPosition({ 960.f, 150.f });
 }
 
 void Game::initWindow() {
     window = new sf::RenderWindow(sf::VideoMode({ 1920, 1080 }), "Room 629", sf::Style::None);
+    window->setFramerateLimit(120);
     window->setVerticalSyncEnabled(true);
 }
 
 void Game::initViewSystem() {
-    viewSystem = new ViewSystem( 1920.f, 300.f, 1920.f, 300.f);
+    viewSystem = new ViewSystem(1920.f, 300.f, 1920.f, 300.f);
 }
 
 // Public
@@ -53,6 +52,8 @@ Game::Game() : background(backgroundTexture) {
     initViewSystem();
     player = new Player(this);
     menu = new Menu(this);
+    hud = new HUD(this); 
+
     mainMenuText = menu->getMainMenuText();
     controlsMenuText = menu->getControlsMenuText();
 }
@@ -60,6 +61,7 @@ Game::Game() : background(backgroundTexture) {
 Game::~Game() {
     delete player;
     delete menu;
+    delete hud;    
     delete window;
     delete viewSystem;
 }
@@ -68,22 +70,23 @@ void Game::mainMenu() {
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
     for (int i = 0; i < mainMenuText.size(); i++) {
         if (mainMenuText[i].getGlobalBounds().contains(mousePos)) {
+<<<<<<< Updated upstream
             mainMenuText[i].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
+=======
+            mainMenuText[i].setFillColor(sf::Color(200, 200, 200));
+>>>>>>> Stashed changes
 
             int isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
             if (isMousePressed && !isMouseHeld) {
                 if (i == 0) {
-                    // Pressing continue button
                     isInMenu = false;
-                    background.setColor(sf::Color(255, 255, 255, 255)); // Reset background darkening
+                    background.setColor(sf::Color(255, 255, 255, 255));
                 }
                 else if (i == 2) {
-                    // Pressing controls button
                     isInControlsMenu = true;
                     isInMenu = false;
                 }
                 else if (i == 3) {
-                    // Pressing exit button
                     window->close();
                 }
             }
@@ -97,12 +100,16 @@ void Game::mainMenu() {
 
 void Game::controlsMenu() {
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
+<<<<<<< Updated upstream
     if (controlsMenuText[4].getGlobalBounds().contains(mousePos)) {
         controlsMenuText[4].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
+=======
+    if (controlsMenuText[3].getGlobalBounds().contains(mousePos)) {
+        controlsMenuText[3].setFillColor(sf::Color(200, 200, 200));
+>>>>>>> Stashed changes
 
         int isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
         if (isMousePressed && !isMouseHeld) {
-            // Pressing back button
             isInMenu = true;
             isInControlsMenu = false;
         }
@@ -114,11 +121,22 @@ void Game::controlsMenu() {
 }
 
 void Game::inputHandler() {
-    // Toggle run
     playerRunning = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift) && !playerCrouching;
 
-    float moveSpeed = playerMoveSpeed;
+<<<<<<< Updated upstream
+=======
+    int isCrouchPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LControl);
+    if (isCrouchPressed && !isCrouchHeld) {
+        playerCrouching = !playerCrouching;
+    }
+    isCrouchHeld = isCrouchPressed;
 
+>>>>>>> Stashed changes
+    float moveSpeed = playerMoveSpeed;
+    if (playerRunning) moveSpeed *= 1.5f;
+    if (playerCrouching) moveSpeed *= 0.5f;
+
+<<<<<<< Updated upstream
     if (playerRunning) {
         moveSpeed *= 2.0f; // Increase speed while running
     }
@@ -126,6 +144,11 @@ void Game::inputHandler() {
     // Move left and right
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) && player->getPlayer().getPosition().x >= 60) {
         player->getPlayer().setScale({ -scale, scale });
+=======
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A)) {
+        player->getPlayer().setScale({ -scale - 2.f, scale + 2.f });
+        player->getPlayer().setOrigin({ static_cast<float>(frameWidth), 0 });
+>>>>>>> Stashed changes
         playerVelocity.x -= moveSpeed;
     }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) && player->getPlayer().getPosition().x <= 1860) {
@@ -133,7 +156,6 @@ void Game::inputHandler() {
         playerVelocity.x += moveSpeed;
     }
 
-    // Jump
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && !playerInAir) {
         playerInAir = true;
         playerJumping = true;
@@ -142,7 +164,6 @@ void Game::inputHandler() {
 }
 
 void Game::updatePlayer() {
-    // Animate depending on state
     if (playerJumping) {
         player->animateJump();
     }
@@ -163,8 +184,12 @@ void Game::update() {
     playerVelocity.x = 0;
     playerRunning = false;
 
+<<<<<<< Updated upstream
     // Clamp player to ground
     if (player->getPlayer().getPosition().y > ground - 1) {
+=======
+    if (player->getPlayer().getPosition().y > ground) {
+>>>>>>> Stashed changes
         playerInAir = false;
         playerVelocity.y = 0;
         player->getPlayer().setPosition({ player->getPlayer().getPosition().x, ground });
@@ -181,22 +206,21 @@ void Game::update() {
     updatePlayer();
 
     viewSystem->update(player->getPlayer().getPosition());
+
+    hud->update(deltaTime, playerRunning, playerCrouching);
 }
 
 void Game::render() {
     window->clear();
 
-    window->draw(background); // Draws the entire BackGround
+    window->draw(background);
 
-    // -------- IN GAME ---------
     if (!isInMenu && !isInControlsMenu) {
-        window->setView(viewSystem->getView()); // A view of a portion of the background
-        window->draw(player->getPlayer());
+        window->setView(viewSystem->getView());
+        hud->render(*window);
     }
-
-    // ------ MAINMENU UI ---------
     else {
-        window->setView(window->getDefaultView()); // Setting the view back to the entire screen
+        window->setView(window->getDefaultView());
         if (isInMenu) {
             for (int i = 0; i < mainMenuText.size(); i++) {
                 window->draw(mainMenuText[i]);
@@ -208,7 +232,6 @@ void Game::render() {
             }
         }
     }
-
     window->display();
 }
 
@@ -219,6 +242,7 @@ void Game::run() {
                 window->close();
             }
 
+<<<<<<< Updated upstream
             // Toggle main menu
             bool isEscapePressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape);
             if (isEscapePressed && !isEscapeHeld) {
@@ -235,6 +259,11 @@ void Game::run() {
                     isInControlsMenu = false;
                     background.setColor(sf::Color(255, 255, 255, 255)); // Revert darkening the background
                 }
+=======
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && !isInMenu && !isInControlsMenu) {
+                isInMenu = true;
+                background.setColor(sf::Color(255, 255, 255, 125));
+>>>>>>> Stashed changes
             }
             isEscapeHeld = isEscapePressed;
         }
@@ -251,7 +280,10 @@ void Game::run() {
         debug();
     }
 }
+<<<<<<< Updated upstream
 
 void Game::debug() {
     std::cout << "Player position : ( " << player->getPlayer().getPosition().x << ", " << player->getPlayer().getPosition().y << " )" << std::endl;
 }
+=======
+>>>>>>> Stashed changes
