@@ -157,6 +157,16 @@ void Game::inputHandler() {
         playerJumping = true;
         playerVelocity.y = -(playerMoveSpeed + 100.f);
     }
+
+    // Check door interaction
+    if (!isTransitioning && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
+        if (doorBounds[doorNo].contains(player->getPlayer().getPosition())) {
+            isTransitioning = true;
+            transitionFadeOut = true;
+            transitionAlpha = 0.f;
+            doorNo = 1;
+        }
+    }
 }
 
 void Game::updatePlayer() {
