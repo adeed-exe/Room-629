@@ -32,6 +32,24 @@ public:
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;
 
+<<<<<<< Updated upstream
+=======
+    //For level transition
+    bool isTransitioning;
+    float transitionAlpha;
+    bool transitionFadeOut;
+
+    bool isPauseAtBlack; // check if black
+    float pauseCounter;    // counts time at black
+    float transitionPause;
+
+    sf::RectangleShape fadeRect;
+
+    std:: vector<sf::FloatRect> doorBounds; // hitbox for door
+    int doorNo;
+
+    // Constants used across game
+>>>>>>> Stashed changes
     float scale;
     float animationSpeed;
     int frameWidth, frameHeight;

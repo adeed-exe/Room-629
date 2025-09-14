@@ -5,6 +5,9 @@
 void Game::initVariables() {
     window = nullptr;
 
+    //variables for 
+    
+    // animation of characters
     frameWidth = 43;
     frameHeight = 43;
     scale = 4.f;
@@ -12,17 +15,38 @@ void Game::initVariables() {
     playerMoveSpeed = 150.f;
     gravity = 880.f;
     ground = 180.f;
-
+    
+    //menu naviagation
     isInMenu = true;
     isInControlsMenu = false;
     isMouseHeld = false;
 
+    //player speed and jump mechanic
     playerVelocity = { 0.f, 0.f };
     playerInAir = false;
     playerJumping = false;
     playerRunning = false;
     isEscapeHeld = false;
 
+    //transition effect
+    isTransitioning = false;
+    transitionAlpha = 0.f;
+    transitionFadeOut = true;
+    isPauseAtBlack = false;
+    pauseCounter = 0.f;
+    transitionPause = 2.f;
+    doorNo = 0;
+
+    doorBounds = { {{1212, 64} , {82, 200}} ,  {{1212, 64} , {82, 200}} };
+
+    fadeRect.setSize(sf::Vector2f(1920.f, 1080.f));
+    fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
+
+    // Fade overlay
+    fadeRect.setSize(sf::Vector2f(1920.f, 1080.f));
+    fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
+
+    //Load backgrounds and set parameters
     if (backgroundTexture.loadFromFile("Assets/Sprites/Room629_BG_01.png")) {
         std::cout << "Background texture loaded!" << std::endl;
     }
@@ -30,7 +54,13 @@ void Game::initVariables() {
     background.setColor(sf::Color(255, 255, 255, 125));
     background.setOrigin(background.getLocalBounds().size / 2.f);
 
+<<<<<<< Updated upstream
     background.setPosition({ 960.f, 150.f });
+=======
+
+    //now set to the top of the screen for easier calculation
+    background.setPosition({ 960.f, 150.f});
+>>>>>>> Stashed changes
 }
 
 void Game::initWindow() {
@@ -132,6 +162,16 @@ void Game::inputHandler() {
         playerJumping = true;
         playerVelocity.y = -(playerMoveSpeed + 100.f);
     }
+
+    // Check door interaction
+    if (!isTransitioning && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
+        if (doorBounds[doorNo].contains(player->getPlayer().getPosition())) {
+            isTransitioning = true;
+            transitionFadeOut = true;
+            transitionAlpha = 0.f;
+            doorNo = 1;
+        }
+    }
 }
 
 void Game::updatePlayer() {
@@ -161,6 +201,54 @@ void Game::update() {
         playerVelocity.y = 0;
         player->getPlayer().setPosition({ player->getPlayer().getPosition().x, ground });
     }
+
+    //--------transition (TEMPORARY - WILL MAKE A NEW CLASS FOR IT)-------
+    /*
+        summary 
+        if press F start transition
+        turn up the alpha of the black filter until max
+        when max alpha, change load new background
+        turn down the alpha till min
+    */
+    if (isTransitioning) {
+        if (transitionFadeOut) {
+            // Fade out
+            transitionAlpha += 200.f * deltaTime;
+            if (transitionAlpha >= 255.f) {
+                transitionAlpha = 255.f;
+
+                // Load new background immediately when screen is black
+                if (!isPauseAtBlack && transitionAlpha == 255) {
+                    if (backgroundTexture.loadFromFile("Assets/Sprites/Room629_BG_Hallway.png")) {
+                        background.setTexture(backgroundTexture, true);
+                    }
+                    isPauseAtBlack = true; // start pause timer
+                    pauseCounter = 0.f;
+                    player->getPlayer().setPosition(sf::Vector2f({60, player->getPlayer().getPosition().y}));
+                }
+
+                // Count pause duration
+                pauseCounter += deltaTime;
+                if (pauseCounter >= transitionPause) {
+                    transitionFadeOut = false;   // start fade-in
+                    isPauseAtBlack = false;
+                    pauseCounter = 0.f;
+
+                }
+            }
+        }
+        else {
+            transitionAlpha -= 200 * deltaTime;
+            if (transitionAlpha <= 0) {
+                transitionAlpha = 0;
+                isTransitioning = false; // Transition finished
+            }
+        }
+
+        fadeRect.setFillColor(sf::Color(0, 0, 0, static_cast<uint8_t>(transitionAlpha)));
+    }
+    //------------------------------------------------------------------
+
 
     inputHandler();
 
@@ -200,6 +288,16 @@ void Game::render() {
             }
         }
     }
+<<<<<<< Updated upstream
+=======
+
+    //--------FADE TRANSITION EFFECT-----------
+    if (isTransitioning) {
+        window->setView(window->getDefaultView());
+        window->draw(fadeRect);
+    }
+
+>>>>>>> Stashed changes
     window->display();
 }
 
