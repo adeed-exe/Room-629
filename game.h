@@ -32,8 +32,7 @@ public:
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;
 
-<<<<<<< Updated upstream
-=======
+
     //For level transition
     bool isTransitioning;
     float transitionAlpha;
@@ -49,7 +48,6 @@ public:
     int doorNo;
 
     // Constants used across game
->>>>>>> Stashed changes
     float scale;
     float animationSpeed;
     int frameWidth, frameHeight;

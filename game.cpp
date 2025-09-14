@@ -54,13 +54,8 @@ void Game::initVariables() {
     background.setColor(sf::Color(255, 255, 255, 125));
     background.setOrigin(background.getLocalBounds().size / 2.f);
 
-<<<<<<< Updated upstream
-    background.setPosition({ 960.f, 150.f });
-=======
-
     //now set to the top of the screen for easier calculation
     background.setPosition({ 960.f, 150.f});
->>>>>>> Stashed changes
 }
 
 void Game::initWindow() {
@@ -157,20 +152,10 @@ void Game::inputHandler() {
     }
 
     // Jump
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && !playerInAir) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P) && !playerInAir) {
         playerInAir = true;
         playerJumping = true;
         playerVelocity.y = -(playerMoveSpeed + 100.f);
-    }
-
-    // Check door interaction
-    if (!isTransitioning && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
-        if (doorBounds[doorNo].contains(player->getPlayer().getPosition())) {
-            isTransitioning = true;
-            transitionFadeOut = true;
-            transitionAlpha = 0.f;
-            doorNo = 1;
-        }
     }
 }
 
@@ -288,16 +273,7 @@ void Game::render() {
             }
         }
     }
-<<<<<<< Updated upstream
-=======
 
-    //--------FADE TRANSITION EFFECT-----------
-    if (isTransitioning) {
-        window->setView(window->getDefaultView());
-        window->draw(fadeRect);
-    }
-
->>>>>>> Stashed changes
     window->display();
 }
 
