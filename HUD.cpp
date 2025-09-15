@@ -74,10 +74,10 @@ void HUD::update(float deltaTime, bool isRunning) {
     float fatigueOffsetLeft = 456.8f;
     float fatigueOffsetRight = screenWidth - 76.8f;
 
-    staminaBarBack.setPosition({ std::max(staminaOffsetLeft, std::min(staminaOffsetRight, game->player->getPlayer().getPosition().x - 190)), game->player->getPlayer().getPosition().y - 165});
-    staminaBarFront.setPosition({ std::max(staminaOffsetLeft, std::min(staminaOffsetRight, game->player->getPlayer().getPosition().x - 190)), game->player->getPlayer().getPosition().y - 165 });
-    fatigueBarBack.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), game->player->getPlayer().getPosition().y - 165 });
-    fatigueBarFront.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), game->player->getPlayer().getPosition().y - 165 });
+    staminaBarBack.setPosition({ std::max(staminaOffsetLeft, std::min(staminaOffsetRight, game->player->getPlayer().getPosition().x - 190)), 15});
+    staminaBarFront.setPosition({ std::max(staminaOffsetLeft, std::min(staminaOffsetRight, game->player->getPlayer().getPosition().x - 190)), 15 });
+    fatigueBarBack.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), 15 });
+    fatigueBarFront.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), 15 });
 }
 
 void HUD::render(sf::RenderWindow& window) {
