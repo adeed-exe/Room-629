@@ -17,24 +17,20 @@ void HUD::initHUD() {
     staminaBarBack.setSize({ 130.f, 10.f });
     staminaBarBack.setOrigin(staminaBarBack.getLocalBounds().size / 2.f);
     staminaBarBack.setFillColor(sf::Color(50, 50, 50, 200));
-    staminaBarBack.setPosition({ game->player->getPlayer().getPosition().x - 190, game->player->getPlayer().getPosition().y - 130 });
-
+    
     staminaBarFront.setSize({ 130.f, 10.f });
     staminaBarFront.setOrigin(staminaBarBack.getLocalBounds().size / 2.f);
     staminaBarFront.setFillColor(sf::Color::Green);
-    staminaBarFront.setPosition({ game->player->getPlayer().getPosition().x - 190, game->player->getPlayer().getPosition().y - 130 });
-
+    
     // Fatigue bar
     fatigueBarBack.setSize({ 130.f, 10.f });
     fatigueBarBack.setOrigin(staminaBarBack.getLocalBounds().size / 2.f);
     fatigueBarBack.setFillColor(sf::Color(50, 50, 50, 200));
-    fatigueBarBack.setPosition({ game->player->getPlayer().getPosition().x - 190, game->player->getPlayer().getPosition().y - 115 });
-
+    
     fatigueBarFront.setSize({ 130.f, 10.f });
     fatigueBarFront.setOrigin(staminaBarBack.getLocalBounds().size / 2.f);
     fatigueBarFront.setFillColor(sf::Color::Red);
-    fatigueBarFront.setPosition({ game->player->getPlayer().getPosition().x - 190, game->player->getPlayer().getPosition().y - 115 });
-
+    
     // Subtitle
     subtitleText.setFont(font);
     subtitleText.setCharacterSize(28);
@@ -51,7 +47,7 @@ HUD::HUD(Game* gamePtr) : game(gamePtr), subtitleText(font, "", 0) {
 void HUD::update(float deltaTime, bool isRunning) {
     // Handle stamina logic
     if (isRunning && stamina > 0.f) {
-        stamina -= 30.f * deltaTime; // drain faster while running
+        stamina -= 10.f * deltaTime; // drain faster while running
         if (stamina < 0.f) stamina = 0.f;
     }
     else {
@@ -72,11 +68,16 @@ void HUD::update(float deltaTime, bool isRunning) {
     // Update bar sizes
     staminaBarFront.setSize({ (stamina / maxStamina) * 130.f, 10.f });
     fatigueBarFront.setSize({ (fatigue / maxFatigue) * 130.f, 10.f });
+    float screenWidth = game->background.getLocalBounds().size.x;
+    float staminaOffsetLeft = 76.8f;
+    float staminaOffsetRight = screenWidth - 456.8f;
+    float fatigueOffsetLeft = 456.8f;
+    float fatigueOffsetRight = screenWidth - 76.8f;
 
-    staminaBarBack.setPosition({ std::max(111.8f, std::min(1428.2f, game->player->getPlayer().getPosition().x - 190)), game->player->getPlayer().getPosition().y - 130 });
-    staminaBarFront.setPosition({ std::max(111.8f, std::min(1428.2f, game->player->getPlayer().getPosition().x - 190)), game->player->getPlayer().getPosition().y - 130 });
-    fatigueBarBack.setPosition({ std::max(111.8f, std::min(1428.2f, game->player->getPlayer().getPosition().x - 190)), game->player->getPlayer().getPosition().y - 115 });
-    fatigueBarFront.setPosition({ std::max(111.8f, std::min(1428.2f, game->player->getPlayer().getPosition().x - 190)), game->player->getPlayer().getPosition().y - 115 });
+    staminaBarBack.setPosition({ std::max(staminaOffsetLeft, std::min(staminaOffsetRight, game->player->getPlayer().getPosition().x - 190)), game->player->getPlayer().getPosition().y - 165});
+    staminaBarFront.setPosition({ std::max(staminaOffsetLeft, std::min(staminaOffsetRight, game->player->getPlayer().getPosition().x - 190)), game->player->getPlayer().getPosition().y - 165 });
+    fatigueBarBack.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), game->player->getPlayer().getPosition().y - 165 });
+    fatigueBarFront.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), game->player->getPlayer().getPosition().y - 165 });
 }
 
 void HUD::render(sf::RenderWindow& window) {

@@ -12,7 +12,6 @@ private:
 
     void initVariables();
     void initWindow();
-    void initViewSystem();
 
 public:
     Game();
@@ -25,9 +24,9 @@ public:
     sf::Clock dtClock;
 
     Player* player;
-    sf::Sprite background;
     Menu* menu;
-    HUD* hud; 
+    HUD* hud;
+    sf::Sprite background;
 
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;

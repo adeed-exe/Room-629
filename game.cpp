@@ -34,7 +34,7 @@ void Game::initVariables() {
     transitionFadeOut = true;
     isPauseAtBlack = false;
     pauseCounter = 0.f;
-    transitionPause = 2.f;
+    transitionPause = 1.f;
     doorNo = 0;
 
     doorBounds = { {{1212, 64} , {82, 200}} ,  {{1212, 64} , {82, 200}} };
@@ -64,18 +64,14 @@ void Game::initWindow() {
     window->setVerticalSyncEnabled(true);
 }
 
-void Game::initViewSystem() {
-    viewSystem = new ViewSystem(1920.f, 300.f, 1920.f, 300.f);
-}
-
 // Public
 Game::Game() : background(backgroundTexture) {
     initVariables();
     initWindow();
-    initViewSystem();
     player = new Player(this);
     menu = new Menu(this);
-    hud = new HUD(this); 
+    hud = new HUD(this);
+    viewSystem = new ViewSystem(this);
 
     mainMenuText = menu->getMainMenuText();
     controlsMenuText = menu->getControlsMenuText();
@@ -142,11 +138,11 @@ void Game::inputHandler() {
     }
 
     // Move left and right
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) && player->getPlayer().getPosition().x >= 60) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) && player->getPlayer().getPosition().x >= 68) {
         player->getPlayer().setScale({ -scale, scale });
         playerVelocity.x -= moveSpeed;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) && player->getPlayer().getPosition().x <= 1860) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) && player->getPlayer().getPosition().x <= (background.getLocalBounds().size.x - 68)) {
         player->getPlayer().setScale({ scale, scale });
         playerVelocity.x += moveSpeed;
     }
@@ -205,10 +201,11 @@ void Game::update() {
         when max alpha, change load new background
         turn down the alpha till min
     */
+
     if (isTransitioning) {
         if (transitionFadeOut) {
             // Fade out
-            transitionAlpha += 200.f * deltaTime;
+            transitionAlpha += 750.f * deltaTime;
             if (transitionAlpha >= 255.f) {
                 transitionAlpha = 255.f;
 
@@ -219,7 +216,8 @@ void Game::update() {
                     }
                     isPauseAtBlack = true; // start pause timer
                     pauseCounter = 0.f;
-                    player->getPlayer().setPosition(sf::Vector2f({60, player->getPlayer().getPosition().y}));
+                    player->getPlayer().setScale({ scale, scale });
+                    player->getPlayer().setPosition(sf::Vector2f({ 80, player->getPlayer().getPosition().y }));
                 }
 
                 // Count pause duration
@@ -228,12 +226,11 @@ void Game::update() {
                     transitionFadeOut = false;   // start fade-in
                     isPauseAtBlack = false;
                     pauseCounter = 0.f;
-
                 }
             }
         }
         else {
-            transitionAlpha -= 200 * deltaTime;
+            transitionAlpha -= 1000 * deltaTime;
             if (transitionAlpha <= 0) {
                 transitionAlpha = 0;
                 isTransitioning = false; // Transition finished
@@ -283,6 +280,8 @@ void Game::render() {
             }
         }
     }
+
+    window->draw(fadeRect);
 
     window->display();
 }
