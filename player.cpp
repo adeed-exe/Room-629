@@ -25,14 +25,20 @@ void Player::initPlayer() {
         std::cout << "Player texture [JUMP_9] loaded!" << std::endl;
     }
 
+    if (interactButtonTexture.loadFromFile("Assets/Sprites/button_interact.png")) {
+        std::cout << "F button texture loaded!" << std::endl;
+    }
+
     playerChar.setTexture(playerTexture, true);
     playerChar.setTextureRect(sf::IntRect({ idleX * game->frameWidth, 0 }, { game->frameWidth, game->frameHeight }));
     playerChar.setScale({ game->scale, game->scale });
     playerChar.setOrigin({ game->frameWidth / 2.f, game->frameHeight / 2.f });
     playerChar.setPosition({ 1920 / 2, game->ground });
+
+    interactButton.setTexture(interactButtonTexture, true);
 }
 
-Player::Player(Game* gamePtr) : game(gamePtr), playerChar(playerTexture) {
+Player::Player(Game* gamePtr) : game(gamePtr), playerChar(playerTexture), interactButton(interactButtonTexture) {
     initPlayer();
 }
 
@@ -84,7 +90,10 @@ void Player::animateJump() {
     }
 }
 
-sf::Sprite& Player::getPlayer() 
-{ 
+sf::Sprite& Player::getPlayer() { 
     return playerChar; 
+}
+
+sf::Sprite& Player::getInteractButton() {
+    return interactButton;
 }

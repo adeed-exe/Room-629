@@ -37,7 +37,7 @@ void Game::initVariables() {
     transitionPause = 1.f;
     doorNo = 0;
 
-    doorBounds = { {{1212, 64} , {82, 200}} ,  {{1212, 64} , {82, 200}} };
+    doorBounds = { { { 1212, 64 } , { 82, 200 }} ,  { { 1212, 64 } , { 82, 200 } } };
 
     fadeRect.setSize(sf::Vector2f(1920.f, 1080.f));
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
@@ -281,6 +281,17 @@ void Game::render() {
         }
     }
 
+    if (doorBounds[doorNo].contains(player->getPlayer().getPosition())) {
+        sf::FloatRect door = doorBounds[doorNo];
+        sf::Vector2f doorPos = door.position;
+        sf::Vector2f doorSize = door.size;
+        sf::Vector2f buttonPos;
+        buttonPos.x = doorPos.x + doorSize.x / 2.f - 11.75f;
+        buttonPos.y = 90;
+        player->getInteractButton().setPosition(buttonPos);
+        window->draw(player->getInteractButton());
+    }
+
     window->draw(fadeRect);
 
     window->display();
@@ -328,4 +339,5 @@ void Game::run() {
 void Game::debug() {
     std::cout << "Player position : ( " << player->getPlayer().getPosition().x << ", " << player->getPlayer().getPosition().y << " )" << std::endl;
     std::cout << "HUD position : ( " << hud->getHud().getPosition().x << ", " << hud->getHud().getPosition().y << " )" << std::endl;
+    std::cout << "Interact button position : ( " << player->getInteractButton().getPosition().x << ", " << player->getInteractButton().getPosition().y << " )" << std::endl;
 }

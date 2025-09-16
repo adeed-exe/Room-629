@@ -56,12 +56,11 @@ public:
     float ground;
 
     bool isInMenu, isInControlsMenu;
-    bool isMouseHeld;
+    bool isMouseHeld, isEscapeHeld;
 
     sf::Vector2f playerVelocity;
     bool playerInAir, playerJumping;
     bool playerRunning;
-    bool isEscapeHeld;
 
     void mainMenu(); // Display and handle the main menu
     void controlsMenu(); // Display and handle the controls menu
