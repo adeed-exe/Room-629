@@ -1,16 +1,15 @@
 #pragma once
 #include "pch.h"
 
+class Game;
+
 class ViewSystem {
 private:
-    float screenWidth;
-    float screenHeight;
-    float levelWidth;
-    float levelHeight;
+    Game* game; // Pointer to the main game instance
     sf::View view;
 
 public:
-    ViewSystem(float screenWidth, float screenHeight, float levelWidth, float levelHeight);
+    ViewSystem(Game* gamePtr);
     void update(const sf::Vector2f& targetPos);
     const sf::View& getView() const;
 };

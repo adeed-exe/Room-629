@@ -34,10 +34,13 @@ void Game::initVariables() {
     transitionFadeOut = true;
     isPauseAtBlack = false;
     pauseCounter = 0.f;
-    transitionPause = 2.f;
+    transitionPause = 1.f;
+
+    //Floor and Door counters
+    
     doorNo = 0;
 
-    doorBounds = { {{1212, 64} , {82, 200}} ,  {{1212, 64} , {82, 200}} };
+    doorBounds = { { { 1212, 64 } , { 82, 200 }} ,  { { 1212, 64 } , { 82, 200 } } };
 
     fadeRect.setSize(sf::Vector2f(1920.f, 1080.f));
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
@@ -54,13 +57,8 @@ void Game::initVariables() {
     background.setColor(sf::Color(255, 255, 255, 125));
     background.setOrigin(background.getLocalBounds().size / 2.f);
 
-<<<<<<< Updated upstream
-    background.setPosition({ 960.f, 150.f });
-=======
-
     //now set to the top of the screen for easier calculation
     background.setPosition({ 960.f, 150.f});
->>>>>>> Stashed changes
 }
 
 void Game::initWindow() {
@@ -69,18 +67,15 @@ void Game::initWindow() {
     window->setVerticalSyncEnabled(true);
 }
 
-void Game::initViewSystem() {
-    viewSystem = new ViewSystem(1920.f, 300.f, 1920.f, 300.f);
-}
-
 // Public
 Game::Game() : background(backgroundTexture) {
     initVariables();
     initWindow();
-    initViewSystem();
     player = new Player(this);
     menu = new Menu(this);
-    hud = new HUD(this); 
+    hud = new HUD(this);
+    viewSystem = new ViewSystem(this);
+    Transition = new transition(0.8f);
 
     mainMenuText = menu->getMainMenuText();
     controlsMenuText = menu->getControlsMenuText();
@@ -92,6 +87,7 @@ Game::~Game() {
     delete hud;    
     delete window;
     delete viewSystem;
+    delete Transition;
 }
 
 void Game::mainMenu() {
@@ -147,28 +143,26 @@ void Game::inputHandler() {
     }
 
     // Move left and right
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) && player->getPlayer().getPosition().x >= 60) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::A) && player->getPlayer().getPosition().x >= 68) {
         player->getPlayer().setScale({ -scale, scale });
         playerVelocity.x -= moveSpeed;
     }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) && player->getPlayer().getPosition().x <= 1860) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::D) && player->getPlayer().getPosition().x <= (background.getLocalBounds().size.x - 68)) {
         player->getPlayer().setScale({ scale, scale });
         playerVelocity.x += moveSpeed;
     }
 
     // Jump
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Space) && !playerInAir) {
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::P) && !playerInAir) {
         playerInAir = true;
         playerJumping = true;
         playerVelocity.y = -(playerMoveSpeed + 100.f);
     }
 
     // Check door interaction
-    if (!isTransitioning && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
+    if (!Transition->getIsTransitioning() && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
         if (doorBounds[doorNo].contains(player->getPlayer().getPosition())) {
-            isTransitioning = true;
-            transitionFadeOut = true;
-            transitionAlpha = 0.f;
+            Transition->start();
             doorNo = 1;
         }
     }
@@ -209,7 +203,9 @@ void Game::update() {
         turn up the alpha of the black filter until max
         when max alpha, change load new background
         turn down the alpha till min
-    */
+    
+
+
     if (isTransitioning) {
         if (transitionFadeOut) {
             // Fade out
@@ -224,7 +220,8 @@ void Game::update() {
                     }
                     isPauseAtBlack = true; // start pause timer
                     pauseCounter = 0.f;
-                    player->getPlayer().setPosition(sf::Vector2f({60, player->getPlayer().getPosition().y}));
+                    player->getPlayer().setScale({ scale, scale });
+                    player->getPlayer().setPosition(sf::Vector2f({ 80, player->getPlayer().getPosition().y }));
                 }
 
                 // Count pause duration
@@ -233,7 +230,6 @@ void Game::update() {
                     transitionFadeOut = false;   // start fade-in
                     isPauseAtBlack = false;
                     pauseCounter = 0.f;
-
                 }
             }
         }
@@ -247,6 +243,16 @@ void Game::update() {
 
         fadeRect.setFillColor(sf::Color(0, 0, 0, static_cast<uint8_t>(transitionAlpha)));
     }
+    */
+    Transition->update(deltaTime, [this]() {
+        // this runs once when fully black
+        if (backgroundTexture.loadFromFile("Assets/Sprites/Room629_BG_Hallway.png")) {
+            background.setTexture(backgroundTexture, true);
+        }
+        player->getPlayer().setScale({ scale, scale });
+        player->getPlayer().setPosition({ 80, player->getPlayer().getPosition().y });
+        });
+
     //------------------------------------------------------------------
 
 
@@ -288,16 +294,20 @@ void Game::render() {
             }
         }
     }
-<<<<<<< Updated upstream
-=======
 
-    //--------FADE TRANSITION EFFECT-----------
-    if (isTransitioning) {
-        window->setView(window->getDefaultView());
-        window->draw(fadeRect);
+    if (doorBounds[doorNo].contains(player->getPlayer().getPosition())) {
+        sf::FloatRect door = doorBounds[doorNo];
+        sf::Vector2f doorPos = door.position;
+        sf::Vector2f doorSize = door.size;
+        sf::Vector2f buttonPos;
+        buttonPos.x = doorPos.x + doorSize.x / 2.f - 11.75f;
+        buttonPos.y = 90;
+        player->getInteractButton().setPosition(buttonPos);
+        window->draw(player->getInteractButton());
     }
 
->>>>>>> Stashed changes
+    Transition->render(*window);
+
     window->display();
 }
 
@@ -341,6 +351,8 @@ void Game::run() {
     }
 }
 void Game::debug() {
-    std::cout << "Player position : ( " << player->getPlayer().getPosition().x << ", " << player->getPlayer().getPosition().y << " )" << std::endl;
+    /*std::cout << "Player position : ( " << player->getPlayer().getPosition().x << ", " << player->getPlayer().getPosition().y << " )" << std::endl;
     std::cout << "HUD position : ( " << hud->getHud().getPosition().x << ", " << hud->getHud().getPosition().y << " )" << std::endl;
+    std::cout << "Interact button position : ( " << player->getInteractButton().getPosition().x << ", " << player->getInteractButton().getPosition().y << " )" << std::endl;*/
+
 }

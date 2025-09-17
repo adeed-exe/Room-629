@@ -5,6 +5,7 @@
 #include "menu.h"
 #include "ViewSystem.h"
 #include "hud.h"
+#include "transition.h"
 
 class Game {
 private:
@@ -12,7 +13,6 @@ private:
 
     void initVariables();
     void initWindow();
-    void initViewSystem();
 
 public:
     Game();
@@ -21,19 +21,20 @@ public:
     sf::RenderWindow* window;
     ViewSystem* viewSystem;
 
+    transition* Transition;
+
     float deltaTime;
     sf::Clock dtClock;
 
     Player* player;
-    sf::Sprite background;
     Menu* menu;
-    HUD* hud; 
+    HUD* hud;
+    sf::Sprite background;
 
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;
 
-<<<<<<< Updated upstream
-=======
+
     //For level transition
     bool isTransitioning;
     float transitionAlpha;
@@ -49,7 +50,6 @@ public:
     int doorNo;
 
     // Constants used across game
->>>>>>> Stashed changes
     float scale;
     float animationSpeed;
     int frameWidth, frameHeight;
@@ -59,12 +59,11 @@ public:
     float ground;
 
     bool isInMenu, isInControlsMenu;
-    bool isMouseHeld;
+    bool isMouseHeld, isEscapeHeld;
 
     sf::Vector2f playerVelocity;
     bool playerInAir, playerJumping;
     bool playerRunning;
-    bool isEscapeHeld;
 
     void mainMenu(); // Display and handle the main menu
     void controlsMenu(); // Display and handle the controls menu
