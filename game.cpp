@@ -35,6 +35,9 @@ void Game::initVariables() {
     isPauseAtBlack = false;
     pauseCounter = 0.f;
     transitionPause = 1.f;
+
+    //Floor and Door counters
+    
     doorNo = 0;
 
     doorBounds = { { { 1212, 64 } , { 82, 200 }} ,  { { 1212, 64 } , { 82, 200 } } };
@@ -72,6 +75,7 @@ Game::Game() : background(backgroundTexture) {
     menu = new Menu(this);
     hud = new HUD(this);
     viewSystem = new ViewSystem(this);
+    Transition = new transition(0.8f);
 
     mainMenuText = menu->getMainMenuText();
     controlsMenuText = menu->getControlsMenuText();
@@ -83,6 +87,7 @@ Game::~Game() {
     delete hud;    
     delete window;
     delete viewSystem;
+    delete Transition;
 }
 
 void Game::mainMenu() {
@@ -155,11 +160,9 @@ void Game::inputHandler() {
     }
 
     // Check door interaction
-    if (!isTransitioning && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
+    if (!Transition->getIsTransitioning() && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
         if (doorBounds[doorNo].contains(player->getPlayer().getPosition())) {
-            isTransitioning = true;
-            transitionFadeOut = true;
-            transitionAlpha = 0.f;
+            Transition->start();
             doorNo = 1;
         }
     }
@@ -200,12 +203,13 @@ void Game::update() {
         turn up the alpha of the black filter until max
         when max alpha, change load new background
         turn down the alpha till min
-    */
+    
+
 
     if (isTransitioning) {
         if (transitionFadeOut) {
             // Fade out
-            transitionAlpha += 750.f * deltaTime;
+            transitionAlpha += 200.f * deltaTime;
             if (transitionAlpha >= 255.f) {
                 transitionAlpha = 255.f;
 
@@ -230,7 +234,7 @@ void Game::update() {
             }
         }
         else {
-            transitionAlpha -= 1000 * deltaTime;
+            transitionAlpha -= 200 * deltaTime;
             if (transitionAlpha <= 0) {
                 transitionAlpha = 0;
                 isTransitioning = false; // Transition finished
@@ -239,6 +243,16 @@ void Game::update() {
 
         fadeRect.setFillColor(sf::Color(0, 0, 0, static_cast<uint8_t>(transitionAlpha)));
     }
+    */
+    Transition->update(deltaTime, [this]() {
+        // this runs once when fully black
+        if (backgroundTexture.loadFromFile("Assets/Sprites/Room629_BG_Hallway.png")) {
+            background.setTexture(backgroundTexture, true);
+        }
+        player->getPlayer().setScale({ scale, scale });
+        player->getPlayer().setPosition({ 80, player->getPlayer().getPosition().y });
+        });
+
     //------------------------------------------------------------------
 
 
@@ -292,7 +306,7 @@ void Game::render() {
         window->draw(player->getInteractButton());
     }
 
-    window->draw(fadeRect);
+    Transition->render(*window);
 
     window->display();
 }
@@ -337,7 +351,8 @@ void Game::run() {
     }
 }
 void Game::debug() {
-    std::cout << "Player position : ( " << player->getPlayer().getPosition().x << ", " << player->getPlayer().getPosition().y << " )" << std::endl;
+    /*std::cout << "Player position : ( " << player->getPlayer().getPosition().x << ", " << player->getPlayer().getPosition().y << " )" << std::endl;
     std::cout << "HUD position : ( " << hud->getHud().getPosition().x << ", " << hud->getHud().getPosition().y << " )" << std::endl;
-    std::cout << "Interact button position : ( " << player->getInteractButton().getPosition().x << ", " << player->getInteractButton().getPosition().y << " )" << std::endl;
+    std::cout << "Interact button position : ( " << player->getInteractButton().getPosition().x << ", " << player->getInteractButton().getPosition().y << " )" << std::endl;*/
+
 }

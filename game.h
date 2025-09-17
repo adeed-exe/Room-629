@@ -5,6 +5,7 @@
 #include "menu.h"
 #include "ViewSystem.h"
 #include "hud.h"
+#include "transition.h"
 
 class Game {
 private:
@@ -19,6 +20,8 @@ public:
 
     sf::RenderWindow* window;
     ViewSystem* viewSystem;
+
+    transition* Transition;
 
     float deltaTime;
     sf::Clock dtClock;
