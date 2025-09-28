@@ -1,13 +1,13 @@
-#include "pch.h"
-#include "hud.h"
-#include "game.h"
+#include "PCH.h"
+#include "HUD.h"
+#include "Game.h"
 
 void HUD::initHUD() {
     if (!font.openFromFile("Assets/Fonts/ui.ttf")) {
         std::cout << "Failed to load HUD font!" << std::endl;
     }
 
-    // Bars sizes
+    // Bar sizes
     maxStamina = 100.f;
     stamina = maxStamina;
     maxFatigue = 100.f;
@@ -37,7 +37,7 @@ void HUD::initHUD() {
     subtitleText.setFillColor(sf::Color::White);
     subtitleText.setOutlineColor(sf::Color::Black);
     subtitleText.setOutlineThickness(2.f);
-    subtitleText.setPosition(sf::Vector2f(1920.f / 2.f - 300.f, 900.f)); // bottom center-ish
+    subtitleText.setPosition(sf::Vector2f(1920.f / 2.f - 300.f, 900.f)); // Bottom center-ish
 }
 
 HUD::HUD(Game* gamePtr) : game(gamePtr), subtitleText(font, "", 0) {
@@ -47,21 +47,21 @@ HUD::HUD(Game* gamePtr) : game(gamePtr), subtitleText(font, "", 0) {
 void HUD::update(float deltaTime, bool isRunning) {
     // Handle stamina logic
     if (isRunning && stamina > 0.f) {
-        stamina -= 10.f * deltaTime; // drain faster while running
+        stamina -= 10.f * deltaTime; // Drain faster while running
         if (stamina < 0.f) stamina = 0.f;
     }
     else {
-        stamina += 20.f * deltaTime; // regenerate stamina
+        stamina += 20.f * deltaTime; // Regenerate stamina
         if (stamina > maxStamina) stamina = maxStamina;
     }
 
     // Handle fatigue logic
     if (isRunning) {
-        fatigue += 15.f * deltaTime; // accumulate fatigue
+        fatigue += 15.f * deltaTime; // Accumulate fatigue
         if (fatigue > maxFatigue) fatigue = maxFatigue;
     }
     else {
-        fatigue -= 10.f * deltaTime; // reduce fatigue
+        fatigue -= 10.f * deltaTime; // Reduce fatigue
         if (fatigue < 0.f) fatigue = 0.f;
     }
 

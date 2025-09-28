@@ -139,27 +139,31 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Door.cpp" />
     <ClCompile Include="HUD.cpp" />
-    <ClCompile Include="menu.cpp" />
-    <ClCompile Include="pch.cpp">
+    <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="PCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="player.cpp" />
-    <ClCompile Include="game.cpp" />
+    <ClCompile Include="Player.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="Room 629.cpp" />
-    <ClCompile Include="transition.cpp" />
+    <ClCompile Include="Room.cpp" />
+    <ClCompile Include="Transition.cpp" />
     <ClCompile Include="ViewSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Door.h" />
     <ClInclude Include="HUD.h" />
-    <ClInclude Include="menu.h" />
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="player.h" />
-    <ClInclude Include="game.h" />
-    <ClInclude Include="transition.h" />
+    <ClInclude Include="Menu.h" />
+    <ClInclude Include="PCH.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Game.h" />
+    <ClInclude Include="Room.h" />
+    <ClInclude Include="Transition.h" />
     <ClInclude Include="ViewSystem.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

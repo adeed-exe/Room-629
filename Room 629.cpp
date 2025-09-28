@@ -1,5 +1,5 @@
-#include "pch.h"
-#include "game.h"
+#include "PCH.h"
+#include "Game.h"
 
 int main() {
     srand(static_cast<unsigned>(time(NULL))); // Set random seed for rng

@@ -1,11 +1,13 @@
 ﻿#pragma once
 
-#include "pch.h"
-#include "player.h"
-#include "menu.h"
+#include "PCH.h"
+#include "Player.h"
+#include "Menu.h"
 #include "ViewSystem.h"
-#include "hud.h"
-#include "transition.h"
+#include "HUD.h"
+#include "Transition.h"
+#include "Door.h"
+#include "Room.h"
 
 class Game {
 private:
@@ -13,15 +15,26 @@ private:
 
     void initVariables();
     void initWindow();
+    void initRooms();
+    void buildCaches();
+
+    void inputHandler();
+    void update();
+    void render();
+    void debug();
+    void titleScreen();
+    void mainMenu();
+    void controlsMenu();
+
+    void pauseGame();
+    void resumeGame();
+    void exitGame();
 
 public:
-    Game();
-    ~Game();
+    // Getters used by other subsystems
+    sf::RenderWindow* getWindow() { return window; }
 
     sf::RenderWindow* window;
-    ViewSystem* viewSystem;
-
-    transition* Transition;
 
     float deltaTime;
     sf::Clock dtClock;
@@ -29,27 +42,35 @@ public:
     Player* player;
     Menu* menu;
     HUD* hud;
+    Door* door;
+    Room* room;
+    ViewSystem* viewSystem;
+    Transition* transition;
     sf::Sprite background;
+    sf::Sprite titleScreenBackground;
 
+    std::map<int, Room> rooms;
+    int currentRoomId = 0;
+
+    std::vector<sf::Text> titleScreenText;
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;
 
-
-    //For level transition
+    // For level transition
     bool isTransitioning;
     float transitionAlpha;
     bool transitionFadeOut;
 
-    bool isPauseAtBlack; // check if black
-    float pauseCounter;    // counts time at black
+    bool isPauseAtBlack; // Check if black
+    float pauseCounter;    // Counts time at black
     float transitionPause;
 
     sf::RectangleShape fadeRect;
 
-    std:: vector<sf::FloatRect> doorBounds; // hitbox for door
+    std::vector<Door*> doors;
     int doorNo;
 
-    // Constants used across game
+    // Constants and states used across game
     float scale;
     float animationSpeed;
     int frameWidth, frameHeight;
@@ -58,6 +79,7 @@ public:
     float gravity;
     float ground;
 
+    bool isInTitleScreen;
     bool isInMenu, isInControlsMenu;
     bool isMouseHeld, isEscapeHeld;
 
@@ -65,23 +87,12 @@ public:
     bool playerInAir, playerJumping;
     bool playerRunning;
 
-    void inputHandler(); // Handle every input
-    void updatePlayer(); // Update player state and position
-    void update(); // Handle logic per frame
-    void render(); // Draw everything
+    Game();
+    ~Game();
+
+    void run();
     
     void startNewGame();
-    void loadGame();
-    void saveGame();
-    void exitGame();
-    void mainMenu(); // Display and handle the main menu
-    void controlsMenu(); // Display and handle the controls menu
-
-    void pauseGame();
-    void resumeGame();
-
-    void changeRoom(int doorId);
-
-    void run(); // Runs everything
-    void debug(); // Debugging shenanigans
+    void resetGame();
+    void changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride = { -1.f, -1.f });
 };

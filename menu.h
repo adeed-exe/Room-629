@@ -1,6 +1,6 @@
 #pragma once
 
-#include "pch.h"
+#include "PCH.h"
 
 class Game;
 
@@ -15,12 +15,14 @@ private:
 public:
     // UI buttons
     sf::Text text;
+    std::vector<sf::Text> titleScreenText;
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;
 
     Menu(Game* gamePtr);
 
     // Return the player sprite for Game class
+    std::vector<sf::Text> getTitleScreenText();
     std::vector<sf::Text> getMainMenuText();
     std::vector<sf::Text> getControlsMenuText();
 };

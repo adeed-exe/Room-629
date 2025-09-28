@@ -1,12 +1,12 @@
-#include "pch.h"
+#include "PCH.h"
 #include "ViewSystem.h"
-#include "game.h"
+#include "Game.h"
 
 ViewSystem::ViewSystem(Game* gamePtr) : game(gamePtr)
 {
     sf::Vector2f bounds = game->background.getLocalBounds().size;
     float aspectRatio = 16.f / 9.f;
-    
+
     // Sets the viewer to the screen aspect ratio
     view.setSize({ bounds.y * aspectRatio, bounds.y });
     view.setCenter({ bounds.x / 2.f , bounds.y / 2.f });

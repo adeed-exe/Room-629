@@ -3,8 +3,11 @@
 #include <iostream>
 #include <stdlib.h>
 #include <vector>
+#include <map>
+#include <string>
 #include <ctime>
 #include <time.h>
+#include <functional>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>

@@ -1,8 +1,7 @@
-#include "pch.h"
-#include "transition.h"
-#include <iostream>
+#include "PCH.h"
+#include "Transition.h"
 
-transition::transition(float pauseTime)
+Transition::Transition(float pauseTime)
     : alpha(0.f)
     , isTransitioning(false)
     , fadeOut(true)
@@ -15,7 +14,7 @@ transition::transition(float pauseTime)
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
 }
 
-void transition::start(std::function<void()> onFullBlack) {
+void Transition::start(std::function<void()> onFullBlack) {
     isTransitioning = true;
     fadeOut = true;
     alpha = 0.f;
@@ -24,7 +23,7 @@ void transition::start(std::function<void()> onFullBlack) {
     onFullBlackCallback = onFullBlack;
 }
 
-void transition::reset() {
+void Transition::reset() {
     isTransitioning = false;
     fadeOut = true;
     alpha = 0.f;
@@ -34,7 +33,7 @@ void transition::reset() {
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
 }
 
-void transition::update(float deltaTime) {
+void Transition::update(float deltaTime) {
     if (!isTransitioning) return;
 
     if (fadeOut) {
@@ -43,7 +42,7 @@ void transition::update(float deltaTime) {
             alpha = 255.f;
 
             if (!pauseAtBlack) {
-                // call stored callback once when fully black
+                // Call stored callback once when fully black
                 if (onFullBlackCallback) {
                     onFullBlackCallback();
                 }
@@ -53,7 +52,7 @@ void transition::update(float deltaTime) {
 
             pauseCounter += deltaTime;
             if (pauseCounter >= pauseDuration) {
-                fadeOut = false; // begin fade-in
+                fadeOut = false; // Begin fade-in
                 pauseAtBlack = false;
                 pauseCounter = 0.f;
             }
@@ -64,14 +63,14 @@ void transition::update(float deltaTime) {
         if (alpha <= 0.f) {
             alpha = 0.f;
             isTransitioning = false;
-            onFullBlackCallback = nullptr; // clear callback after finish
+            onFullBlackCallback = nullptr; // Clear callback after finish
         }
     }
 
     fadeRect.setFillColor(sf::Color(0, 0, 0, static_cast<uint8_t>(alpha)));
 }
 
-void transition::render(sf::RenderWindow& window) {
+void Transition::render(sf::RenderWindow& window) {
     if (isTransitioning || static_cast<int>(alpha) > 0) {
         window.draw(fadeRect);
     }

@@ -1,6 +1,6 @@
-﻿#include "pch.h"
-#include "player.h"
-#include "game.h"
+﻿#include "PCH.h"
+#include "Player.h"
+#include "Game.h"
 
 void Player::initPlayer() {
     frameTimer = 0.f;
@@ -29,7 +29,7 @@ void Player::initPlayer() {
         std::cout << "F button texture loaded!" << std::endl;
     }
 
-    playerChar.setTexture(playerTexture, true);
+    playerChar.setTexture(idleTexture, true);
     playerChar.setTextureRect(sf::IntRect({ idleX * game->frameWidth, 0 }, { game->frameWidth, game->frameHeight }));
     playerChar.setScale({ game->scale, game->scale });
     playerChar.setOrigin({ game->frameWidth / 2.f, game->frameHeight / 2.f });
