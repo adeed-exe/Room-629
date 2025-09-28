@@ -65,12 +65,23 @@ public:
     bool playerInAir, playerJumping;
     bool playerRunning;
 
-    void mainMenu(); // Display and handle the main menu
-    void controlsMenu(); // Display and handle the controls menu
     void inputHandler(); // Handle every input
     void updatePlayer(); // Update player state and position
     void update(); // Handle logic per frame
     void render(); // Draw everything
+    
+    void startNewGame();
+    void loadGame();
+    void saveGame();
+    void exitGame();
+    void mainMenu(); // Display and handle the main menu
+    void controlsMenu(); // Display and handle the controls menu
+
+    void pauseGame();
+    void resumeGame();
+
+    void changeRoom(int doorId);
+
     void run(); // Runs everything
     void debug(); // Debugging shenanigans
 };

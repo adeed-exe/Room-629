@@ -1,34 +1,35 @@
 #pragma once
+
 #include "pch.h"
+#include <functional>
 
-class Game;
-
-class transition
-{
+class transition {
 private:
     sf::RectangleShape fadeRect;
     float alpha;
     bool isTransitioning;
-    bool fadeOut;        // true = fade to black, false = fade back in
-    bool pauseAtBlack;   // whether we’re pausing at full black
+    bool fadeOut;       // fading to black if true, fading back if false
+    bool pauseAtBlack;  // whether we're holding the full-black pause
     float pauseCounter;
-    float pauseDuration; // how long to pause at black (seconds)
+    float pauseDuration;
+
+    // Stored callback executed once when full-black achieved.
+    std::function<void()> onFullBlackCallback;
 
 public:
+    explicit transition(float pauseTime = 0.8f);
 
-    transition(float pauseTime = 1.f);
+    // Start a transition; onFullBlack is called once when screen becomes fully black.
+    void start(std::function<void()> onFullBlack = nullptr);
 
-    // Control
-    void start();  // start transition
-    void reset();  // reset to idle
+    // Immediately reset/clear the transition state.
+    void reset();
 
-    // Update + Render
-    void update(float deltaTime, std::function<void()> onBlack = nullptr);
+    // Call every frame.
+    void update(float deltaTime);
+
+    // Draw the fade rect (call during render).
     void render(sf::RenderWindow& window);
 
-    // Getters
     bool getIsTransitioning() const { return isTransitioning; }
-
-	
 };
-
