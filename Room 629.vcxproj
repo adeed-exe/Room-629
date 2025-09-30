@@ -109,7 +109,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>D:\code\dsa\Room 629\External\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,7 +129,7 @@
       <LanguageStandard>stdcpp20</LanguageStandard>
       <AdditionalIncludeDirectories>D:\code\dsa\Room 629\External\SFML\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderFile>PCH.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,6 +152,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Room 629.cpp" />
     <ClCompile Include="Room.cpp" />
+    <ClCompile Include="SaveSystem.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="ViewSystem.cpp" />
   </ItemGroup>
@@ -163,6 +164,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Room.h" />
+    <ClInclude Include="SaveSystem.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="ViewSystem.h" />
   </ItemGroup>

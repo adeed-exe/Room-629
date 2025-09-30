@@ -8,6 +8,7 @@
 #include <ctime>
 #include <time.h>
 #include <functional>
+#include <fstream>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>

@@ -9,9 +9,9 @@ void HUD::initHUD() {
 
     // Bar sizes
     maxStamina = 100.f;
-    stamina = maxStamina;
+    stamina = game->gameState.curStamina;
     maxFatigue = 100.f;
-    fatigue = 0.f;
+    fatigue = game->gameState.curFatigue;
 
     // Stamina bar
     staminaBarBack.setSize({ 130.f, 10.f });

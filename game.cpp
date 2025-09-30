@@ -19,7 +19,12 @@ Game::Game()
     firstRoom.applyToSprite(background);
 
     viewSystem = new ViewSystem(this);
+    saveSystem = new SaveSystem(this);
     transition = new Transition(0.8f);
+
+    if (!saveSystem->fileExists(savePath)) {
+        saveSystem->save(savePath, gameState);
+    }
 
     if (backgroundTexture.loadFromFile("Assets/Sprites/Room629_BG_Gate.png")) {
         std::cout << "Title Screen texture loaded!" << std::endl;
@@ -33,6 +38,7 @@ Game::~Game() {
     delete menu;
     delete hud;
     delete viewSystem;
+    delete saveSystem;
     delete transition;
     delete window;
 }
@@ -48,6 +54,9 @@ void Game::initVariables() {
     gravity = 880.f;
     ground = 180.f;
 
+    autoSaveTimer = 0.f;
+    autoSaveInterval = 60.f;
+
     isInTitleScreen = true;
     isInMenu = false;
     isInControlsMenu = false;
@@ -58,8 +67,6 @@ void Game::initVariables() {
     playerInAir = false;
     playerJumping = false;
     playerRunning = false;
-
-    currentRoomId = 0;
 
     fadeRect.setSize({ 1920.f, 1080.f });
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
@@ -87,19 +94,14 @@ void Game::initRooms() {
 }
 
 void Game::startNewGame() {
-    isInMenu = false;
-    isInControlsMenu = false;
-
-    playerInAir = false;
-    playerVelocity = { 0.f, 0.f };
-
+    saveSystem->reset(savePath, gameState);
     changeRoom(0);
 }
 
 void Game::resetGame() {
-    auto it = rooms.find(currentRoomId);
+    auto it = rooms.find(gameState.currentRoomId);
     if (it == rooms.end()) return;
-    changeRoom(currentRoomId, it->second.getSpawn());
+    changeRoom(gameState.currentRoomId, it->second.getSpawn());
 }
 
 void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
@@ -107,7 +109,7 @@ void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
 
     transition->start([this, targetRoomId, spawnOverride]() {
         std::cout << "Changing to room: " << targetRoomId << "\n";
-        currentRoomId = targetRoomId;
+        gameState.currentRoomId = targetRoomId;
 
         Room& room = rooms.at(targetRoomId);
         if (!room.loadTexture())
@@ -123,6 +125,7 @@ void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
         if (isInTitleScreen) {
             isInTitleScreen = false;
         }
+        saveSystem->save(savePath, gameState);
         });
 }
 
@@ -150,7 +153,7 @@ void Game::inputHandler() {
     }
 
     if (!transition->getIsTransitioning() && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
-        auto it = rooms.find(currentRoomId);
+        auto it = rooms.find(gameState.currentRoomId);
         if (it != rooms.end()) {
             for (const Door& d : it->second.getDoors()) {
                 if (d.bounds.contains(player->getPlayer().getPosition())) {
@@ -164,6 +167,15 @@ void Game::inputHandler() {
 
 void Game::update() {
     deltaTime = dtClock.restart().asSeconds();
+
+    gameState.curStamina = hud->stamina;
+    gameState.curFatigue = hud->fatigue;
+    gameState.playerPos = player->getPlayer().getPosition();
+
+    autoSaveTimer += deltaTime;
+    if (autoSaveTimer >= autoSaveInterval) {
+        autoSave();
+    }
 
     if (player->getPlayer().getPosition().y > ground - 1.f) {
         playerInAir = false;
@@ -217,7 +229,7 @@ void Game::render() {
         }
     }
 
-    auto it = rooms.find(currentRoomId);
+    auto it = rooms.find(gameState.currentRoomId);
     if (it != rooms.end()) {
         for (const Door& d : it->second.getDoors()) {
             if (d.bounds.contains(player->getPlayer().getPosition())) {
@@ -239,7 +251,8 @@ void Game::debug() {
 
 void Game::titleScreen() {
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
-        resetGame();
+        saveSystem->load(savePath, gameState);
+        changeRoom(gameState.currentRoomId, gameState.playerPos);
     }
 }
 
@@ -311,7 +324,14 @@ void Game::resumeGame() {
 }
 
 void Game::exitGame() {
+    saveSystem->save(savePath, gameState);
     window->close();
+}
+
+void Game::autoSave() {
+    saveSystem->save(savePath, gameState);
+    std::cout << "Game auto-saved!\n";
+    autoSaveTimer = 0.f; // Reset timer
 }
 
 void Game::run() {
