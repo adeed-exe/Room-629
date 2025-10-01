@@ -18,6 +18,7 @@ public:
     std::vector<sf::Text> titleScreenText;
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;
+    std::vector<sf::Text> confirmationMenuText;
 
     Menu(Game* gamePtr);
 
@@ -25,4 +26,5 @@ public:
     std::vector<sf::Text> getTitleScreenText();
     std::vector<sf::Text> getMainMenuText();
     std::vector<sf::Text> getControlsMenuText();
+    std::vector<sf::Text> getConfirmationMenuText();
 };

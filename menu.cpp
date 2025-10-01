@@ -9,13 +9,13 @@ void Menu::initMenu() {
 
     float startY = 350.f;
     float spacing = 120.f;
-    std::vector<std::string> mainMenuLabels = { "Continue", "New Game", "Controls", "Exit" };
-
     text.setFont(font);
     text.setCharacterSize(50);
     text.setFillColor(sf::Color::White);
     text.setOutlineColor(sf::Color::Black);
     text.setOutlineThickness(3.f);
+
+    std::vector<std::string> mainMenuLabels = { "Continue", "New Game", "Controls", "Exit" };
 
     for (int i = 0; i < 4; i++) {
         text.setString(mainMenuLabels[i]);
@@ -24,7 +24,6 @@ void Menu::initMenu() {
         mainMenuText.push_back(text);
     }
 
-    float startY2 = 350.f;
     std::vector<std::string> controlsMenuLabels = { "Move Left : A", "Move Right : D", "Jump : Space", "Sprint : Hold Shift", "Back" };
 
     for (int i = 0; i < 5; i++) {
@@ -32,6 +31,23 @@ void Menu::initMenu() {
         text.setOrigin(text.getGlobalBounds().size / 2.f);
         text.setPosition({ 960, startY - 50 + i * spacing });
         controlsMenuText.push_back(text);
+    }
+
+    std::vector<std::string> confirmationMenuLabels = { "Are you sure?", "No", "Yes" };
+
+    for (int i = 0; i < 3; i++) {
+        text.setString(confirmationMenuLabels[i]);
+        text.setOrigin(text.getGlobalBounds().size / 2.f);
+        if (i == 0) {
+            text.setPosition({ 960, startY + spacing });
+        }
+        else if (i == 1) {
+            text.setPosition({ 960 - 100, startY + 2 * spacing });
+        }
+        else {
+            text.setPosition({ 960 + 100, startY + 2 * spacing });
+        }
+        confirmationMenuText.push_back(text);
     }
 
     text.setOutlineThickness(5.f);
@@ -56,3 +72,4 @@ Menu::Menu(Game* gamePtr) : game(gamePtr), text(font, "", 0) {
 std::vector<sf::Text> Menu::getTitleScreenText() { return titleScreenText; }
 std::vector<sf::Text> Menu::getMainMenuText() { return mainMenuText; }
 std::vector<sf::Text> Menu::getControlsMenuText() { return controlsMenuText; }
+std::vector<sf::Text> Menu::getConfirmationMenuText() { return confirmationMenuText; }

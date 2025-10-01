@@ -6,6 +6,7 @@
 #include "HUD.h"
 #include "ViewSystem.h"
 #include "SaveSystem.h"
+#include "SoundSystem.h"
 #include "Transition.h"
 #include "Door.h"
 #include "Room.h"
@@ -27,6 +28,7 @@ private:
     void titleScreen();
     void mainMenu();
     void controlsMenu();
+    void confirmationMenu();
 
     void pauseGame();
     void resumeGame();
@@ -46,6 +48,7 @@ public:
     Transition* transition;
     ViewSystem* viewSystem;
     SaveSystem* saveSystem;
+    SoundSystem* soundSystem;
 
     sf::Sprite background;
     sf::Sprite titleScreenBackground;
@@ -61,6 +64,7 @@ public:
     std::vector<sf::Text> titleScreenText;
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;
+    std::vector<sf::Text> confirmationMenuText;
 
     GameState gameState;
     const std::string savePath = "Assets/Save Files/saveFile.sav";
@@ -77,9 +81,12 @@ public:
     float autoSaveTimer;
     float autoSaveInterval;
 
-    bool isInTitleScreen;
-    bool isInMenu, isInControlsMenu;
+    bool isInTitleScreen, isInMenu;
+    bool isInControlsMenu, isInConfirmationMenu;
+    int lastMenuAction; // 0 = New game, 1 = Exit;
+
     bool isMouseHeld, isEscapeHeld;
+    bool isEnterHeld;
 
     sf::Vector2f playerVelocity;
     bool playerInAir, playerJumping;

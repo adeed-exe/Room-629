@@ -20,6 +20,7 @@ Game::Game()
 
     viewSystem = new ViewSystem(this);
     saveSystem = new SaveSystem(this);
+    soundSystem = new SoundSystem(this);
     transition = new Transition(0.8f);
 
     if (!saveSystem->fileExists(savePath)) {
@@ -31,6 +32,8 @@ Game::Game()
     }
 
     titleScreenBackground.setTexture(backgroundTexture, true);
+
+    soundSystem->playBackgroundMusic();
 }
 
 Game::~Game() {
@@ -39,6 +42,7 @@ Game::~Game() {
     delete hud;
     delete viewSystem;
     delete saveSystem;
+    delete soundSystem;
     delete transition;
     delete window;
 }
@@ -60,8 +64,11 @@ void Game::initVariables() {
     isInTitleScreen = true;
     isInMenu = false;
     isInControlsMenu = false;
+    isInConfirmationMenu = false;
+
     isMouseHeld = false;
     isEscapeHeld = false;
+    isEnterHeld = false;
 
     playerVelocity = { 0.f, 0.f };
     playerInAir = false;
@@ -81,6 +88,7 @@ void Game::buildCaches() {
     titleScreenText = menu->getTitleScreenText();
     mainMenuText = menu->getMainMenuText();
     controlsMenuText = menu->getControlsMenuText();
+    confirmationMenuText = menu->getConfirmationMenuText();
 }
 
 void Game::initRooms() {
@@ -157,6 +165,7 @@ void Game::inputHandler() {
         if (it != rooms.end()) {
             for (const Door& d : it->second.getDoors()) {
                 if (d.bounds.contains(player->getPlayer().getPosition())) {
+                    soundSystem->playDoorSound();
                     changeRoom(d.targetRoomId, d.spawnPos);
                     break;
                 }
@@ -204,10 +213,21 @@ void Game::render() {
     window->clear();
     window->draw(background);
 
-    if (!isInMenu && !isInControlsMenu && !isInTitleScreen) {
+    if (!isInMenu && !isInControlsMenu && !isInTitleScreen && !isInConfirmationMenu) {
         window->setView(viewSystem->getView());
         window->draw(player->getPlayer());
         hud->render(*window);
+        auto it = rooms.find(gameState.currentRoomId);
+        if (it != rooms.end()) {
+            for (const Door& d : it->second.getDoors()) {
+                if (d.bounds.contains(player->getPlayer().getPosition())) {
+                    sf::Vector2f buttonPos(d.bounds.position.x + d.bounds.size.x / 2.f - 11.75f, 90.f);
+                    player->getInteractButton().setPosition(buttonPos);
+                    window->draw(player->getInteractButton());
+                    break;
+                }
+            }
+        }
     }
     else {
         window->setView(window->getDefaultView());
@@ -227,16 +247,9 @@ void Game::render() {
                 window->draw(controlsMenuText[i]);
             }
         }
-    }
-
-    auto it = rooms.find(gameState.currentRoomId);
-    if (it != rooms.end()) {
-        for (const Door& d : it->second.getDoors()) {
-            if (d.bounds.contains(player->getPlayer().getPosition())) {
-                sf::Vector2f buttonPos(d.bounds.position.x + d.bounds.size.x / 2.f - 11.75f, 90.f);
-                player->getInteractButton().setPosition(buttonPos);
-                window->draw(player->getInteractButton());
-                break;
+        else if (isInConfirmationMenu) {
+            for (int i = 0; i < confirmationMenuText.size(); i++) {
+                window->draw(confirmationMenuText[i]);
             }
         }
     }
@@ -250,9 +263,27 @@ void Game::debug() {
 }
 
 void Game::titleScreen() {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter)) {
+    sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
+    bool isEnterPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Enter);
+    if (isEnterPressed && !isEnterHeld) {
+        soundSystem->playStartSound();
         saveSystem->load(savePath, gameState);
         changeRoom(gameState.currentRoomId, gameState.playerPos);
+    }
+    isEnterHeld = isEnterPressed;
+
+    if (titleScreenText[1].getGlobalBounds().contains(mousePos)) {
+        titleScreenText[1].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
+        bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+        if (isMousePressed && !isMouseHeld) {
+            soundSystem->playStartSound();
+            saveSystem->load(savePath, gameState);
+            changeRoom(gameState.currentRoomId, gameState.playerPos);
+        }
+        isMouseHeld = isMousePressed;
+    }
+    else {
+        titleScreenText[1].setFillColor(sf::Color(255, 255, 255));
     }
 }
 
@@ -261,21 +292,25 @@ void Game::mainMenu() {
     for (int i = 0; i < mainMenuText.size(); i++) {
         if (mainMenuText[i].getGlobalBounds().contains(mousePos)) {
             mainMenuText[i].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
-            int isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+            bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
             if (isMousePressed && !isMouseHeld) {
+                soundSystem->playButtonSound();
                 if (i == 0) { // Continue
                     resumeGame();
                 }
                 else if (i == 1) { // New game
-                    startNewGame();
-                    resumeGame();
+                    lastMenuAction = 0;
+                    isInConfirmationMenu = true;
+                    isInMenu = false;
                 }
                 else if (i == 2) { // Controls
                     isInControlsMenu = true;
                     isInMenu = false;
                 }
                 else if (i == 3) { // Exit
-                    exitGame();
+                    lastMenuAction = 1;
+                    isInConfirmationMenu = true;
+                    isInMenu = false;
                 }
             }
             isMouseHeld = isMousePressed;
@@ -290,8 +325,9 @@ void Game::controlsMenu() {
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
     if (controlsMenuText[4].getGlobalBounds().contains(mousePos)) {
         controlsMenuText[4].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
-        int isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+        bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
         if (isMousePressed && !isMouseHeld) {
+            soundSystem->playButtonSound();
             isInMenu = true;
             isInControlsMenu = false;
         }
@@ -302,16 +338,51 @@ void Game::controlsMenu() {
     }
 }
 
+void Game::confirmationMenu() {
+    sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
+    for (int i = 1; i < confirmationMenuText.size(); i++) {
+        if (confirmationMenuText[i].getGlobalBounds().contains(mousePos)) {
+            confirmationMenuText[i].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
+            bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+            if (isMousePressed && !isMouseHeld) {
+                soundSystem->playButtonSound();
+                if (i == 1) { // No
+                    isInConfirmationMenu = false;
+                    isInMenu = true;
+                }
+                else if (i == 2) { // Yes
+                    isInConfirmationMenu = false;
+                    if (lastMenuAction == 0) {
+                        startNewGame();
+                        resumeGame();
+                    }
+                    else {
+                        exitGame();
+                    }
+                }
+            }
+            isMouseHeld = isMousePressed;
+        }
+        else {
+            confirmationMenuText[i].setFillColor(sf::Color(255, 255, 255));
+        }
+    }
+}
+
 void Game::pauseGame() {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && !isInMenu && !isInControlsMenu) {
+    soundSystem->playButtonSound();
+    if (!isInMenu && !isInControlsMenu && !isInConfirmationMenu) {
         isInMenu = true;
         background.setColor(sf::Color(255, 255, 255, 125)); // Darken background while in menu
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && !isInMenu && isInControlsMenu) {
+    else if (!isInMenu && isInControlsMenu) {
         isInControlsMenu = false;
         isInMenu = true;
+    } else if (!isInMenu && isInConfirmationMenu) {
+        isInConfirmationMenu = false;
+        isInMenu = true;
     }
-    else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape) && isInMenu) {
+    else if (isInMenu) {
         isInMenu = false;
         isInControlsMenu = false;
         background.setColor(sf::Color(255, 255, 255, 255)); // Revert darkening the background
@@ -356,6 +427,9 @@ void Game::run() {
         }
         else if (isInControlsMenu) {
             controlsMenu();
+        }
+        else if (isInConfirmationMenu) {
+            confirmationMenu();
         }
         else {
             update();

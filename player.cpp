@@ -61,6 +61,9 @@ void Player::animateWalk() {
         playerChar.setTextureRect(sf::IntRect({ walkX * game->frameWidth, 0 }, { game->frameWidth, game->frameHeight }));
         playerChar.setOrigin({ game->frameWidth / 2.f, game->frameHeight / 2.f });
         walkX = (walkX + 1) % totalWalk;
+        if (walkX == 2 || walkX == 6) {
+            game->soundSystem->playFootstepSound(0.5f);
+        }
     }
 }
 
@@ -72,6 +75,9 @@ void Player::animateRun() {
         playerChar.setTextureRect(sf::IntRect({ runX * game->frameWidth, 0 }, { game->frameWidth, game->frameHeight }));
         playerChar.setOrigin({ game->frameWidth / 2.f, game->frameHeight / 2.f });
         runX = (runX + 1) % totalRun;
+        if (runX == 2 || runX == 6) {
+            game->soundSystem->playFootstepSound(1.f);
+        }
     }
 }
 

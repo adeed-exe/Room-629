@@ -153,6 +153,7 @@
     <ClCompile Include="Room 629.cpp" />
     <ClCompile Include="Room.cpp" />
     <ClCompile Include="SaveSystem.cpp" />
+    <ClCompile Include="SoundSystem.cpp" />
     <ClCompile Include="Transition.cpp" />
     <ClCompile Include="ViewSystem.cpp" />
   </ItemGroup>
@@ -165,6 +166,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="Room.h" />
     <ClInclude Include="SaveSystem.h" />
+    <ClInclude Include="SoundSystem.h" />
     <ClInclude Include="Transition.h" />
     <ClInclude Include="ViewSystem.h" />
   </ItemGroup>
