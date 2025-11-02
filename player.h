@@ -25,6 +25,8 @@ private:
     int runX, totalRun;
     int jumpX, totalJump;
 
+    int frameWidth, frameHeight;
+
     void initPlayer(); // Load texture and set initial values
 
 public:

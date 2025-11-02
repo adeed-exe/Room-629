@@ -10,6 +10,7 @@ Game::Game()
     player = new Player(this);
     menu = new Menu(this);
     hud = new HUD(this);
+    nightmare = new Nightmare(this);
 
     buildCaches();
     initRooms();
@@ -45,16 +46,16 @@ Game::~Game() {
     delete soundSystem;
     delete transition;
     delete window;
+    delete nightmare;
 }
 
 void Game::initVariables() {
     window = nullptr;
 
-    frameWidth = 43;
-    frameHeight = 43;
     scale = 4.f;
     animationSpeed = 0.08f;
     playerMoveSpeed = 150.f;
+    nightmareMoveSpeed = 225.f;
     gravity = 880.f;
     ground = 180.f;
 
@@ -74,6 +75,10 @@ void Game::initVariables() {
     playerInAir = false;
     playerJumping = false;
     playerRunning = false;
+
+    nightmareVelocity = { 0.f, 0.f };
+    nightmareAttacking = false;
+    nightmareRunning = false;
 
     fadeRect.setSize({ 1920.f, 1080.f });
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
@@ -174,6 +179,28 @@ void Game::inputHandler() {
     }
 }
 
+void Game::nightmareAI() {
+    float distance = player->getPlayer().getPosition().x - nightmare->getNightmare().getPosition().x;
+    nightmareRunning = (abs(distance) >= 200.f);
+    float moveSpeed = nightmareMoveSpeed;
+    if (nightmareRunning) moveSpeed *= 1.5f;
+
+    nightmareVelocity.x = 0.f;
+    nightmareAttacking = false;
+
+    if (distance >= 50.f) {
+        nightmare->getNightmare().setScale({ -2 * scale, 2 * scale });
+        nightmareVelocity.x += moveSpeed;
+    }
+    else if (distance <= -50.f) {
+        nightmare->getNightmare().setScale({ 2 * scale, 2 * scale });
+        nightmareVelocity.x -= moveSpeed;
+    }
+    else {
+        nightmareAttacking = true;
+    }
+}
+
 void Game::update() {
     deltaTime = dtClock.restart().asSeconds();
 
@@ -196,14 +223,22 @@ void Game::update() {
 
     inputHandler();
 
+    nightmareAI();
+
     if (playerInAir) playerVelocity.y += gravity * deltaTime;
 
     player->getPlayer().move(playerVelocity * deltaTime);
+    nightmare->getNightmare().move(nightmareVelocity * deltaTime);
 
     if (playerJumping) player->animateJump();
     else if (playerVelocity.x != 0.f && playerRunning && hud->stamina >= 1.f) player->animateRun();
     else if (playerVelocity.x != 0.f) player->animateWalk();
     else player->animateIdle();
+
+    if (nightmareAttacking) nightmare->animateAttack();
+    else if (nightmareVelocity.x != 0.f && nightmareRunning) nightmare->animateRun();
+    else if (nightmareVelocity.x != 0.f) nightmare->animateWalk();
+    else nightmare->animateIdle();
 
     viewSystem->update(player->getPlayer().getPosition());
     hud->update(deltaTime, playerRunning && playerVelocity.x != 0.f);
@@ -216,6 +251,7 @@ void Game::render() {
     if (!isInMenu && !isInControlsMenu && !isInTitleScreen && !isInConfirmationMenu) {
         window->setView(viewSystem->getView());
         window->draw(player->getPlayer());
+        window->draw(nightmare->getNightmare());
         hud->render(*window);
         auto it = rooms.find(gameState.currentRoomId);
         if (it != rooms.end()) {

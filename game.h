@@ -10,6 +10,7 @@
 #include "Transition.h"
 #include "Door.h"
 #include "Room.h"
+#include "Nightmare.h"
 
 class Game {
 private:
@@ -21,6 +22,7 @@ private:
     void buildCaches();
 
     void inputHandler();
+    void nightmareAI();
     void update();
     void render();
     void debug();
@@ -49,6 +51,7 @@ public:
     ViewSystem* viewSystem;
     SaveSystem* saveSystem;
     SoundSystem* soundSystem;
+    Nightmare* nightmare;
 
     sf::Sprite background;
     sf::Sprite titleScreenBackground;
@@ -72,9 +75,9 @@ public:
     // Constants and states used across game
     float scale;
     float animationSpeed;
-    int frameWidth, frameHeight;
 
     float playerMoveSpeed;
+    float nightmareMoveSpeed;
     float gravity;
     float ground;
 
@@ -91,6 +94,9 @@ public:
     sf::Vector2f playerVelocity;
     bool playerInAir, playerJumping;
     bool playerRunning;
+
+    sf::Vector2f nightmareVelocity;
+    bool nightmareAttacking, nightmareRunning;
 
     // For level transition
     bool isTransitioning;

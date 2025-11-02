@@ -11,6 +11,9 @@ void Player::initPlayer() {
     runX = 0; totalRun = 8;
     jumpX = 0; totalJump = 5;
 
+    frameWidth = 43;
+    frameHeight = 43;
+
     // Load sprite sheet
     if (idleTexture.loadFromFile("Assets/Sprites/idle_8.png")) {
         std::cout << "Player texture [IDLE_8] loaded!" << std::endl;
@@ -30,9 +33,9 @@ void Player::initPlayer() {
     }
 
     playerChar.setTexture(idleTexture, true);
-    playerChar.setTextureRect(sf::IntRect({ idleX * game->frameWidth, 0 }, { game->frameWidth, game->frameHeight }));
+    playerChar.setTextureRect(sf::IntRect({ idleX * frameWidth, 0 }, { frameWidth, frameHeight }));
     playerChar.setScale({ game->scale, game->scale });
-    playerChar.setOrigin({ game->frameWidth / 2.f, game->frameHeight / 2.f });
+    playerChar.setOrigin({ frameWidth / 2.f, frameHeight / 2.f });
     playerChar.setPosition({ 1920 / 2, game->ground });
 
     interactButton.setTexture(interactButtonTexture, true);
@@ -47,8 +50,7 @@ void Player::animateIdle() {
     if (frameTimer >= game->animationSpeed) {
         frameTimer = 0.f;
         playerChar.setTexture(idleTexture);
-        playerChar.setTextureRect(sf::IntRect({ idleX * game->frameWidth, 0 }, { game->frameWidth, game->frameHeight }));
-        playerChar.setOrigin({ game->frameWidth / 2.f, game->frameHeight / 2.f });
+        playerChar.setTextureRect(sf::IntRect({ idleX * frameWidth, 0 }, { frameWidth, frameHeight }));
         idleX = (idleX + 1) % totalIdle;
     }
 }
@@ -58,8 +60,7 @@ void Player::animateWalk() {
     if (frameTimer >= game->animationSpeed) {
         frameTimer = 0.f;
         playerChar.setTexture(walkTexture);
-        playerChar.setTextureRect(sf::IntRect({ walkX * game->frameWidth, 0 }, { game->frameWidth, game->frameHeight }));
-        playerChar.setOrigin({ game->frameWidth / 2.f, game->frameHeight / 2.f });
+        playerChar.setTextureRect(sf::IntRect({ walkX * frameWidth, 0 }, { frameWidth, frameHeight }));
         walkX = (walkX + 1) % totalWalk;
         if (walkX == 2 || walkX == 6) {
             game->soundSystem->playFootstepSound(0.5f);
@@ -72,8 +73,7 @@ void Player::animateRun() {
     if (frameTimer >= game->animationSpeed) {
         frameTimer = 0.f;
         playerChar.setTexture(runTexture);
-        playerChar.setTextureRect(sf::IntRect({ runX * game->frameWidth, 0 }, { game->frameWidth, game->frameHeight }));
-        playerChar.setOrigin({ game->frameWidth / 2.f, game->frameHeight / 2.f });
+        playerChar.setTextureRect(sf::IntRect({ runX * frameWidth, 0 }, { frameWidth, frameHeight }));
         runX = (runX + 1) % totalRun;
         if (runX == 2 || runX == 6) {
             game->soundSystem->playFootstepSound(1.f);
@@ -91,7 +91,7 @@ void Player::animateJump() {
             return;
         }
         playerChar.setTexture(jumpTexture);
-        playerChar.setTextureRect(sf::IntRect({ jumpX * game->frameWidth, 0 * game->frameHeight }, { game->frameWidth, game->frameHeight }));
+        playerChar.setTextureRect(sf::IntRect({ jumpX * frameWidth, 0 }, { frameWidth, frameHeight }));
         jumpX++;
     }
 }
