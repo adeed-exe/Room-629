@@ -141,6 +141,7 @@
   <ItemGroup>
     <ClCompile Include="Door.cpp" />
     <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="Item.cpp" />
     <ClCompile Include="Menu.cpp" />
     <ClCompile Include="Nightmare.cpp" />
     <ClCompile Include="PCH.cpp">
@@ -161,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="Door.h" />
     <ClInclude Include="HUD.h" />
+    <ClInclude Include="Item.h" />
     <ClInclude Include="Menu.h" />
     <ClInclude Include="Nightmare.h" />
     <ClInclude Include="PCH.h" />

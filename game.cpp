@@ -24,15 +24,17 @@ Game::Game()
     soundSystem = new SoundSystem(this);
     transition = new Transition(0.8f);
 
+
     if (!saveSystem->fileExists(savePath)) {
         saveSystem->save(savePath, gameState);
     }
 
-    if (backgroundTexture.loadFromFile("Assets/Sprites/Room629_BG_Gate.png")) {
+    if (backgroundTexture.loadFromFile("Assets/Sprites/BG_titlescreen.png")) {
         std::cout << "Title Screen texture loaded!" << std::endl;
     }
 
     titleScreenBackground.setTexture(backgroundTexture, true);
+    titleScreenBackground.setScale(sf::Vector2f({ 1920.f / backgroundTexture.getSize().x, 1080.f / backgroundTexture.getSize().y }));
 
     soundSystem->playBackgroundMusic();
 }
@@ -97,13 +99,30 @@ void Game::buildCaches() {
 }
 
 void Game::initRooms() {
-    Room r0(0, "Assets/Sprites/Room629_BG_01.png", { 1253.f, ground });
+    Room r0(0, "Assets/Sprites/BG_room629.png", { 1253.f, ground });
     r0.addDoor(Door(0, sf::FloatRect({ 1212.f, 64.f }, { 82.f, 200.f }), 1, { 100.f, ground }));
     rooms.emplace(0, std::move(r0));
 
-    Room r1(1, "Assets/Sprites/Room629_BG_Hallway.png", { 100.f, ground });
-    r1.addDoor(Door(1, sf::FloatRect({ 30, 64.f }, { 82.f, 200.f }), 0, { 1253.f, ground }));
+    Room r1(1, "Assets/Sprites/BG_hallway_6.png", { 100.f, ground });
+    r1.addDoor(Door(0, sf::FloatRect({ 30.f, 64.f }, { 82.f, 200.f }), 0, { 1253.f, ground }));
+    r1.addDoor(Door(1, sf::FloatRect({ 1200.f, 64.f }, { 82.f, 200.f }), 2, { 100.f, ground }));
     rooms.emplace(1, std::move(r1));
+
+    Room r2(2, "Assets/Sprites/BG_office_room.png", { 100.f, ground });
+    r2.addDoor(Door(0, sf::FloatRect({ 200.f, 64.f }, { 82.f, 200.f }), 1, { 100.f, ground }));
+    rooms.emplace(2, std::move(r2));
+
+
+    std::cout << "======" << std::endl;
+    for (const auto& [roomId, room] : rooms) {
+        std::cout << "Room " << roomId << " has " << room.getDoors().size() << " door: ";
+        for (const Door& d : room.getDoors()) {
+            std::cout << "Door ID: " << d.id
+                << " -> Target Room: " << d.targetRoomId << "||";
+        }
+        std::cout << std::endl;
+    }
+    std::cout << "====" << std::endl;
 }
 
 void Game::startNewGame() {
@@ -176,6 +195,8 @@ void Game::inputHandler() {
                 }
             }
         }
+
+        
     }
 }
 
@@ -264,6 +285,9 @@ void Game::render() {
                 }
             }
         }
+
+  
+
     }
     else {
         window->setView(window->getDefaultView());

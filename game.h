@@ -11,6 +11,8 @@
 #include "Door.h"
 #include "Room.h"
 #include "Nightmare.h"
+#include "Item.h"
+
 
 class Game {
 private:
@@ -63,6 +65,8 @@ public:
     std::map<int, Room> rooms;
 
     std::vector<Door*> doors;
+
+    std::vector<Item*> items;
 
     std::vector<sf::Text> titleScreenText;
     std::vector<sf::Text> mainMenuText;
