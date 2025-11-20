@@ -7,6 +7,20 @@ void HUD::initHUD() {
         std::cout << "Failed to load HUD font!" << std::endl;
     }
 
+    if (coffeeTexture.loadFromFile("Assets/Sprites/coffee.png")) {
+        std::cout << "Coffee texture loaded!" << std::endl;
+    }
+    if (markerTexture.loadFromFile("Assets/Sprites/marker.png")) {
+        std::cout << "Marker texture loaded!" << std::endl;
+    }
+
+    coffee.setTexture(coffeeTexture, true);
+	coffee.setScale({ 0.5f, 0.5f });
+	coffee.setOrigin(coffee.getLocalBounds().size / 2.f);
+    marker.setTexture(markerTexture, true);
+	marker.setScale({ 0.5f, 0.5f });
+	marker.setOrigin(marker.getLocalBounds().size / 2.f);
+
     // Bar sizes
     maxStamina = 100.f;
     stamina = game->gameState.curStamina;
@@ -37,10 +51,21 @@ void HUD::initHUD() {
     subtitleText.setFillColor(sf::Color::White);
     subtitleText.setOutlineColor(sf::Color::Black);
     subtitleText.setOutlineThickness(2.f);
-    subtitleText.setPosition(sf::Vector2f(1920.f / 2.f - 300.f, 900.f)); // Bottom center-ish
+    subtitleText.setPosition(sf::Vector2f(1920.f / 2.f - 300.f, 900.f)); // Bottom center-ish 
+
+    // Item text
+    itemText.setFont(font);
+    itemText.setString("Items :");
+    itemText.setCharacterSize(10);
+    itemText.setFillColor(sf::Color::White);
+    itemText.setOutlineColor(sf::Color::Black);
+    itemText.setOutlineThickness(2.f);
+	itemText.setOrigin(itemText.getLocalBounds().size / 2.f);
+    itemText.setPosition(sf::Vector2f(17.5f + itemText.getLocalBounds().size.x / 2.f, 282.5f));
+    
 }
 
-HUD::HUD(Game* gamePtr) : game(gamePtr), subtitleText(font, "", 0) {
+HUD::HUD(Game* gamePtr) : game(gamePtr), subtitleText(font, "", 0), itemText(font,"",0), coffee(coffeeTexture), marker(markerTexture) {
     initHUD();
 }
 
@@ -73,14 +98,29 @@ void HUD::update(float deltaTime, bool isRunning) {
     float staminaOffsetRight = screenWidth - 456.8f;
     float fatigueOffsetLeft = 456.8f;
     float fatigueOffsetRight = screenWidth - 76.8f;
+    float itemOffsetLeft = 8.5f + itemText.getLocalBounds().size.x / 2.f;
+    float itemOffsetRight = screenWidth - 493;
 
     staminaBarBack.setPosition({ std::max(staminaOffsetLeft, std::min(staminaOffsetRight, game->player->getPlayer().getPosition().x - 190)), 15});
     staminaBarFront.setPosition({ std::max(staminaOffsetLeft, std::min(staminaOffsetRight, game->player->getPlayer().getPosition().x - 190)), 15 });
     fatigueBarBack.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), 15 });
     fatigueBarFront.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), 15 });
+    itemText.setPosition({ std::max(itemOffsetLeft, std::min(itemOffsetRight, game->player->getPlayer().getPosition().x - 226.7f)), 282.5f });
+    
+	itemSprites.push_back(coffee);
+	itemSprites.push_back(marker);
+
+	items.insert(0);
+    items.insert(1);
+
+    auto it = items.find(0);
+    items.erase(it);
 }
 
 void HUD::render(sf::RenderWindow& window) {
+
+    window.draw(itemText);
+
     window.draw(staminaBarBack);
     window.draw(staminaBarFront);
 
@@ -88,6 +128,13 @@ void HUD::render(sf::RenderWindow& window) {
     window.draw(fatigueBarFront);
 
     window.draw(subtitleText);
+	
+    int index = 0;
+    for (auto i : items) {
+        itemSprites[i].setPosition({itemOffset + itemText.getPosition().x + index * 25.f, itemText.getPosition().y});
+        window.draw(itemSprites[i]);
+        index++;
+	}
 }
 
 void HUD::setSubtitle(const std::string& text) {

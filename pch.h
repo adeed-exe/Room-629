@@ -9,6 +9,7 @@
 #include <time.h>
 #include <functional>
 #include <fstream>
+#include <set>
 
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>

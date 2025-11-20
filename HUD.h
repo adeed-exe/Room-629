@@ -18,11 +18,21 @@ private:
     // Subtitle
    
     sf::Font font;
+    sf::Text itemText;
+    sf::Texture coffeeTexture;
+    sf::Texture markerTexture;
+
+    float itemOffset = 40.f;
 
     void initHUD();
 
 public:
     sf::Text subtitleText;
+    sf::Sprite coffee;
+    sf::Sprite marker;
+
+	std::vector<sf::Sprite> itemSprites;
+    std::set<int> items;
 
     // Values
     float stamina;
