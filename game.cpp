@@ -105,11 +105,11 @@ void Game::initRooms() {
 
     Room r1(1, "Assets/Sprites/BG_hallway_6.png", { 100.f, ground });
     r1.addDoor(Door(0, sf::FloatRect({ 30.f, 64.f }, { 82.f, 200.f }), 0, { 1253.f, ground }));
-    r1.addDoor(Door(1, sf::FloatRect({ 1200.f, 64.f }, { 82.f, 200.f }), 2, { 100.f, ground }));
+    r1.addDoor(Door(1, sf::FloatRect({ 1100.f, 64.f }, { 82.f, 200.f }), 2, { 550.f, ground }));
     rooms.emplace(1, std::move(r1));
 
     Room r2(2, "Assets/Sprites/BG_office_room.png", { 100.f, ground });
-    r2.addDoor(Door(0, sf::FloatRect({ 200.f, 64.f }, { 82.f, 200.f }), 1, { 100.f, ground }));
+    r2.addDoor(Door(0, sf::FloatRect({ 530.f, 64.f }, { 82.f, 200.f }), 1, { 1120.f, ground }));
     rooms.emplace(2, std::move(r2));
 
 
@@ -118,7 +118,7 @@ void Game::initRooms() {
         std::cout << "Room " << roomId << " has " << room.getDoors().size() << " door: ";
         for (const Door& d : room.getDoors()) {
             std::cout << "Door ID: " << d.id
-                << " -> Target Room: " << d.targetRoomId << "||";
+                << " -> Target Room: " << d.targetRoomId << " || ";
         }
         std::cout << std::endl;
     }
