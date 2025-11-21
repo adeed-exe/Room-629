@@ -21,8 +21,10 @@ private:
     sf::Text itemText;
     sf::Texture coffeeTexture;
     sf::Texture markerTexture;
+    sf::Texture chocolateTexture;
+    sf::Texture paperTexture;
 
-    float itemOffset = 40.f;
+    float itemOffset = 43.f;
 
     void initHUD();
 
@@ -30,9 +32,10 @@ public:
     sf::Text subtitleText;
     sf::Sprite coffee;
     sf::Sprite marker;
+    sf::Sprite chocolate;
+    sf::Sprite paper;
 
 	std::vector<sf::Sprite> itemSprites;
-    std::set<int> items;
 
     // Values
     float stamina;

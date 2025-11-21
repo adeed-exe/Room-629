@@ -7,11 +7,17 @@ void HUD::initHUD() {
         std::cout << "Failed to load HUD font!" << std::endl;
     }
 
-    if (coffeeTexture.loadFromFile("Assets/Sprites/coffee.png")) {
+    if (coffeeTexture.loadFromFile("Assets/Sprites/item_coffee.png")) {
         std::cout << "Coffee texture loaded!" << std::endl;
     }
-    if (markerTexture.loadFromFile("Assets/Sprites/marker.png")) {
+    if (markerTexture.loadFromFile("Assets/Sprites/item_marker.png")) {
         std::cout << "Marker texture loaded!" << std::endl;
+    }
+    if (chocolateTexture.loadFromFile("Assets/Sprites/item_chocolate.png")) {
+        std::cout << "Chocolate texture loaded!" << std::endl;
+    }
+    if (paperTexture.loadFromFile("Assets/Sprites/item_paper.png")) {
+        std::cout << "Paper texture loaded!" << std::endl;
     }
 
     coffee.setTexture(coffeeTexture, true);
@@ -20,6 +26,17 @@ void HUD::initHUD() {
     marker.setTexture(markerTexture, true);
 	marker.setScale({ 0.5f, 0.5f });
 	marker.setOrigin(marker.getLocalBounds().size / 2.f);
+    chocolate.setTexture(chocolateTexture, true);
+    chocolate.setScale({ 0.5f, 0.5f });
+    chocolate.setOrigin(chocolate.getLocalBounds().size / 2.f);
+    paper.setTexture(paperTexture, true);
+    paper.setScale({ 0.5f, 0.5f });
+    paper.setOrigin(paper.getLocalBounds().size / 2.f);
+
+    itemSprites.push_back(coffee);
+    itemSprites.push_back(chocolate);
+    itemSprites.push_back(marker);
+    itemSprites.push_back(paper);
 
     // Bar sizes
     maxStamina = 100.f;
@@ -62,10 +79,10 @@ void HUD::initHUD() {
     itemText.setOutlineThickness(2.f);
 	itemText.setOrigin(itemText.getLocalBounds().size / 2.f);
     itemText.setPosition(sf::Vector2f(17.5f + itemText.getLocalBounds().size.x / 2.f, 282.5f));
-    
 }
 
-HUD::HUD(Game* gamePtr) : game(gamePtr), subtitleText(font, "", 0), itemText(font,"",0), coffee(coffeeTexture), marker(markerTexture) {
+HUD::HUD(Game* gamePtr) : game(gamePtr), subtitleText(font, "", 0), itemText(font,"",0),
+    coffee(coffeeTexture), marker(markerTexture), chocolate(chocolateTexture), paper(paperTexture) {
     initHUD();
 }
 
@@ -106,15 +123,6 @@ void HUD::update(float deltaTime, bool isRunning) {
     fatigueBarBack.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), 15 });
     fatigueBarFront.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), 15 });
     itemText.setPosition({ std::max(itemOffsetLeft, std::min(itemOffsetRight, game->player->getPlayer().getPosition().x - 226.7f)), 282.5f });
-    
-	itemSprites.push_back(coffee);
-	itemSprites.push_back(marker);
-
-	items.insert(0);
-    items.insert(1);
-
-    auto it = items.find(0);
-    items.erase(it);
 }
 
 void HUD::render(sf::RenderWindow& window) {
@@ -130,8 +138,8 @@ void HUD::render(sf::RenderWindow& window) {
     window.draw(subtitleText);
 	
     int index = 0;
-    for (auto i : items) {
-        itemSprites[i].setPosition({itemOffset + itemText.getPosition().x + index * 25.f, itemText.getPosition().y});
+    for (auto i : game->gameState.items) {
+        itemSprites[i].setPosition({itemOffset + itemText.getPosition().x + index * 30.f, itemText.getPosition().y});
         window.draw(itemSprites[i]);
         index++;
 	}

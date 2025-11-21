@@ -26,16 +26,22 @@ bool SaveSystem::save(const std::string& filePath, const GameState& state) {
     out << state.curStamina << " " << state.curFatigue << "\n";
 
     // Write inventory
-    for (int i = 0; i < state.inventorySlots.size(); i++) {
-        out << state.inventorySlots[i];
-        if (i < state.inventorySlots.size() - 1) {
+    for (auto& x : state.items) {
+        out << x << " ";
+    }
+    out << -69420 << "\n"; // Terminating number
+
+    // Write room + progress
+    out << state.currentRoomId << " " << state.progress << "\n";
+
+    // Write room item picked bool
+    for (int i = 0; i < state.roomInfo.size(); i++) {
+        out << state.roomInfo[i];
+        if (i < state.roomInfo.size() - 1) {
             out << " ";
         }
     }
     out << "\n";
-
-    // Write room + progress
-    out << state.currentRoomId << " " << state.progress << "\n";
 
     return true;
 }
@@ -55,12 +61,22 @@ bool SaveSystem::load(const std::string& filePath, GameState& state) {
     in >> state.curStamina >> state.curFatigue;
 
     // Read inventory
-    for (int i = 0; i < state.inventorySlots.size(); i++) {
-        in >> state.inventorySlots[i];
+    while (true) {
+        int x;
+        in >> x;
+        if (x == -69420) {
+            break;
+        }
+        state.items.insert(x);
     }
 
     // Read room + progress
     in >> state.currentRoomId >> state.progress;
+
+    // Read room item picked bool
+    for (int i = 0; i < state.roomInfo.size(); i++) {
+        in >> state.roomInfo[i];
+    }
 
     return true;
 }
@@ -80,16 +96,19 @@ bool SaveSystem::reset(const std::string& filePath, const GameState& state) {
     out << 100 << " " << 0 << "\n";
 
     // Write inventory
-    for (int i = 0; i < state.inventorySlots.size(); i++) {
+    out << -69420 << "\n";
+
+    // Write room + progress
+    out << 0 << " " << 0 << "\n";
+
+    // Write room item picked bool
+    for (int i = 0; i < state.roomInfo.size(); i++) {
         out << 0;
-        if (i < state.inventorySlots.size() - 1) {
+        if (i < state.roomInfo.size() - 1) {
             out << " ";
         }
     }
     out << "\n";
-
-    // Write room + progress
-    out << 0 << " " << 0 << "\n";
 
     return true;
 }

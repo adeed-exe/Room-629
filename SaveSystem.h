@@ -9,11 +9,12 @@ struct GameState {
     float curStamina = 100.f;
     float curFatigue = 0.f;
 
-    // Inventory slots, 0 means empty, else contains item IDs
-    std::vector<int> inventorySlots = std::vector<int>(10, 0);
+    std::multiset<int> items;
 
     int currentRoomId = 0;
     int progress = 0; // Incrementing depicts progress
+
+    std::vector<int> roomInfo = std::vector<int>(3); // Whether items at each room are picked or not
 };
 
 class SaveSystem {

@@ -66,8 +66,6 @@ public:
 
     std::vector<Door*> doors;
 
-    std::vector<Item*> items;
-
     std::vector<sf::Text> titleScreenText;
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;

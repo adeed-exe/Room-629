@@ -3,7 +3,7 @@
 #include "Game.h"
 
 // Default constructor
-Item::Item(int _id, const sf::FloatRect& _bounds, int _targetRoomId, const sf::Vector2f& _spawn, std::string _texturePath, bool _picked)
-    : id(_id), bounds(_bounds), targetRoomId(_targetRoomId), spawnPos(_spawn), texturePath(_texturePath), picked(_picked)
+Item::Item(int _id, const sf::FloatRect& _bounds, std::string _texturePath)
+    : id(_id), bounds(_bounds), texturePath(_texturePath)
 {
 }

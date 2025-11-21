@@ -24,7 +24,6 @@ Game::Game()
     soundSystem = new SoundSystem(this);
     transition = new Transition(0.8f);
 
-
     if (!saveSystem->fileExists(savePath)) {
         saveSystem->save(savePath, gameState);
     }
@@ -110,22 +109,33 @@ void Game::initRooms() {
 
     Room r2(2, "Assets/Sprites/BG_office_room.png", { 100.f, ground });
     r2.addDoor(Door(0, sf::FloatRect({ 530.f, 64.f }, { 82.f, 200.f }), 1, { 1120.f, ground }));
+    r2.addItem(Item(3, sf::FloatRect({ 390.f, 64.f }, { 82.f, 200.f }), "Assets/Sprites/coffee.png"));
     rooms.emplace(2, std::move(r2));
 
 
     std::cout << "======" << std::endl;
-    for (const auto& [roomId, room] : rooms) {
+    for (auto& [roomId, room] : rooms) {
         std::cout << "Room " << roomId << " has " << room.getDoors().size() << " door: ";
         for (const Door& d : room.getDoors()) {
             std::cout << "Door ID: " << d.id
                 << " -> Target Room: " << d.targetRoomId << " || ";
         }
         std::cout << std::endl;
+        std::cout << "Room " << roomId << " has " << room.getItems().size() << " items: ";
+        for (Item& i : room.getItems()) {
+            std::cout << "Item ID: " << i.id
+                << " -> Picked: " << gameState.roomInfo[gameState.currentRoomId] << " || ";
+        }
+        std::cout << std::endl;
     }
-    std::cout << "====" << std::endl;
+    std::cout << "======" << std::endl;
 }
 
 void Game::startNewGame() {
+    gameState.items.clear();
+    for (auto& x : gameState.roomInfo) {
+        x = 0;
+    }
     saveSystem->reset(savePath, gameState);
     changeRoom(0);
 }
@@ -184,8 +194,8 @@ void Game::inputHandler() {
         playerVelocity.y = -(playerMoveSpeed + 100.f);
     }
 
+    auto it = rooms.find(gameState.currentRoomId);
     if (!transition->getIsTransitioning() && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
-        auto it = rooms.find(gameState.currentRoomId);
         if (it != rooms.end()) {
             for (const Door& d : it->second.getDoors()) {
                 if (d.bounds.contains(player->getPlayer().getPosition())) {
@@ -194,9 +204,15 @@ void Game::inputHandler() {
                     break;
                 }
             }
+            for (Item& i : it->second.getItems()) {
+                if (i.bounds.contains(player->getPlayer().getPosition()) && !gameState.roomInfo[gameState.currentRoomId]) {
+                    gameState.items.insert(i.id);
+                    gameState.roomInfo[gameState.currentRoomId] = 1;
+                    saveSystem->save(savePath, gameState);
+                    break;
+                }
+            }
         }
-
-        
     }
 }
 
@@ -272,7 +288,7 @@ void Game::render() {
     if (!isInMenu && !isInControlsMenu && !isInTitleScreen && !isInConfirmationMenu) {
         window->setView(viewSystem->getView());
         window->draw(player->getPlayer());
-        window->draw(nightmare->getNightmare());
+        // window->draw(nightmare->getNightmare());
         hud->render(*window);
         auto it = rooms.find(gameState.currentRoomId);
         if (it != rooms.end()) {
@@ -284,10 +300,15 @@ void Game::render() {
                     break;
                 }
             }
+            for (Item& i : it->second.getItems()) {
+                if (i.bounds.contains(player->getPlayer().getPosition()) && !gameState.roomInfo[gameState.currentRoomId]) {
+                    sf::Vector2f buttonPos(i.bounds.position.x + i.bounds.size.x / 2.f - 11.75f, 90.f);
+                    player->getInteractButton().setPosition(buttonPos);
+                    window->draw(player->getInteractButton());
+                    break;
+                }
+            }
         }
-
-  
-
     }
     else {
         window->setView(window->getDefaultView());
@@ -319,7 +340,7 @@ void Game::render() {
 }
 
 void Game::debug() {
-
+    // std::cout << player->getPlayer().getPosition().x << std::endl;
 }
 
 void Game::titleScreen() {

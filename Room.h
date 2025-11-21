@@ -12,7 +12,7 @@ private:
     std::vector<Door> doors;
     sf::Vector2f spawn{ 80.f, 180.f };
 
-    //std::vector<Item> items;
+    std::vector<Item> items;
 
 public:
     // Default constructor
@@ -26,9 +26,9 @@ public:
 
     int getId() const { return id; }
     const std::vector<Door>& getDoors() const { return doors; }
+    std::vector<Item>& getItems() { return items; }
     void addDoor(const Door& d) { doors.push_back(d); }
+    void addItem(const Item& i) { items.push_back(i); }
     const sf::Vector2f& getSpawn() const { return spawn; }
     const std::string& getTexturePath() const { return texturePath; }
-
-    //void addItem(const Item& i) { items.push_back(i); }
 };
