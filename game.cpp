@@ -18,6 +18,7 @@ Game::Game()
     auto& firstRoom = rooms.at(0);
     firstRoom.loadTexture();
     firstRoom.applyToSprite(background);
+    itemSprites = hud->itemSprites;
 
     viewSystem = new ViewSystem(this);
     saveSystem = new SaveSystem(this);
@@ -99,17 +100,17 @@ void Game::buildCaches() {
 
 void Game::initRooms() {
     Room r0(0, "Assets/Sprites/BG_room629.png", { 1253.f, ground });
-    r0.addDoor(Door(0, sf::FloatRect({ 1212.f, 64.f }, { 82.f, 200.f }), 1, { 100.f, ground }));
+    r0.addDoor(Door(0, sf::FloatRect({ 1228.f, 64.f }, { 82.f, 200.f }), 1, { 100.f, ground }));
     rooms.emplace(0, std::move(r0));
 
     Room r1(1, "Assets/Sprites/BG_hallway_6.png", { 100.f, ground });
     r1.addDoor(Door(0, sf::FloatRect({ 30.f, 64.f }, { 82.f, 200.f }), 0, { 1253.f, ground }));
-    r1.addDoor(Door(1, sf::FloatRect({ 1100.f, 64.f }, { 82.f, 200.f }), 2, { 550.f, ground }));
+    r1.addDoor(Door(1, sf::FloatRect({ 1115.f, 64.f }, { 82.f, 200.f }), 2, { 550.f, ground }));
     rooms.emplace(1, std::move(r1));
 
     Room r2(2, "Assets/Sprites/BG_office_room.png", { 100.f, ground });
-    r2.addDoor(Door(0, sf::FloatRect({ 530.f, 64.f }, { 82.f, 200.f }), 1, { 1120.f, ground }));
-    r2.addItem(Item(3, sf::FloatRect({ 390.f, 64.f }, { 82.f, 200.f }), "Assets/Sprites/coffee.png"));
+    r2.addDoor(Door(0, sf::FloatRect({ 550.f, 64.f }, { 82.f, 200.f }), 1, { 1120.f, ground }));
+    r2.addItem(Item(2, 0, sf::FloatRect({ 445.f, 64.f }, { 82.f, 300.f }), { 489.f, 97.f }));
     rooms.emplace(2, std::move(r2));
 
 
@@ -123,7 +124,7 @@ void Game::initRooms() {
         std::cout << std::endl;
         std::cout << "Room " << roomId << " has " << room.getItems().size() << " items: ";
         for (Item& i : room.getItems()) {
-            std::cout << "Item ID: " << i.id
+            std::cout << "Item ID: " << i.itemId
                 << " -> Picked: " << gameState.roomInfo[gameState.currentRoomId] << " || ";
         }
         std::cout << std::endl;
@@ -206,7 +207,7 @@ void Game::inputHandler() {
             }
             for (Item& i : it->second.getItems()) {
                 if (i.bounds.contains(player->getPlayer().getPosition()) && !gameState.roomInfo[gameState.currentRoomId]) {
-                    gameState.items.insert(i.id);
+                    gameState.items.insert(i.itemId);
                     gameState.roomInfo[gameState.currentRoomId] = 1;
                     saveSystem->save(savePath, gameState);
                     break;
@@ -301,8 +302,13 @@ void Game::render() {
                 }
             }
             for (Item& i : it->second.getItems()) {
+                sf::Sprite temp = itemSprites[i.itemId];
+                temp.setPosition(i.drawPos);
+                if (i.roomId == gameState.currentRoomId && !gameState.roomInfo[gameState.currentRoomId]) {
+                    window->draw(temp);
+                }
                 if (i.bounds.contains(player->getPlayer().getPosition()) && !gameState.roomInfo[gameState.currentRoomId]) {
-                    sf::Vector2f buttonPos(i.bounds.position.x + i.bounds.size.x / 2.f - 11.75f, 90.f);
+                    sf::Vector2f buttonPos(i.drawPos.x, i.drawPos.y - 20);
                     player->getInteractButton().setPosition(buttonPos);
                     window->draw(player->getInteractButton());
                     break;
@@ -340,6 +346,8 @@ void Game::render() {
 }
 
 void Game::debug() {
+    // sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
+    // std::cout << mousePos.x << " " << mousePos.y << std::endl;
     // std::cout << player->getPlayer().getPosition().x << std::endl;
 }
 

@@ -123,6 +123,45 @@ void HUD::update(float deltaTime, bool isRunning) {
     fatigueBarBack.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), 15 });
     fatigueBarFront.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), 15 });
     itemText.setPosition({ std::max(itemOffsetLeft, std::min(itemOffsetRight, game->player->getPlayer().getPosition().x - 226.7f)), 282.5f });
+
+    std::multiset<int> temp = game->gameState.items;
+    bool deleting = false;
+    bool deletedItemId = -1;
+    for (auto i : game->gameState.items) {
+        sf::Vector2i mousePosWindow = sf::Mouse::getPosition(*game->window);
+        sf::Vector2f mousePos = game->window->mapPixelToCoords(mousePosWindow);
+        if (itemSprites[i].getGlobalBounds().contains(mousePos)) {
+            itemSprites[i].setColor(sf::Color(255, 255, 255, 150)); // Darken button while hovering
+            bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+            if (isMousePressed && !game->isMouseHeld) {
+                game->soundSystem->playButtonSound();
+                temp.erase(i);
+                deleting = true;
+                deletedItemId = i;
+            }
+            game->isMouseHeld = isMousePressed;
+        }
+        else {
+            itemSprites[i].setColor(sf::Color(255, 255, 255, 255));
+        }
+    }
+    if (deleting) {
+        game->gameState.items = temp;
+        game->saveSystem->save(game->savePath, game->gameState);
+        deleting = false;
+        if (deletedItemId == 0) {
+            stamina += 50;
+        }
+        else if (deletedItemId == 1) {
+            stamina += 20;
+        }
+        else if (deletedItemId == 2) {
+
+        }
+        else {
+
+        }
+    }
 }
 
 void HUD::render(sf::RenderWindow& window) {
@@ -138,8 +177,8 @@ void HUD::render(sf::RenderWindow& window) {
     window.draw(subtitleText);
 	
     int index = 0;
-    for (auto i : game->gameState.items) {
-        itemSprites[i].setPosition({itemOffset + itemText.getPosition().x + index * 30.f, itemText.getPosition().y});
+    for (auto& i : game->gameState.items) {
+        itemSprites[i].setPosition({ itemOffset + itemText.getPosition().x + index * 30.f, itemText.getPosition().y });
         window.draw(itemSprites[i]);
         index++;
 	}
