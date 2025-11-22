@@ -12,7 +12,9 @@
 #include "Room.h"
 #include "Nightmare.h"
 #include "Item.h"
+#include "CutsceneManager.h"
 
+class CutsceneManager;
 
 class Game {
 private:
@@ -54,6 +56,8 @@ public:
     SaveSystem* saveSystem;
     SoundSystem* soundSystem;
     Nightmare* nightmare;
+    CutsceneManager* cutscene;
+
 
     sf::Sprite background;
     sf::Sprite titleScreenBackground;
@@ -65,6 +69,8 @@ public:
     std::map<int, Room> rooms;
 
     std::vector<Door*> doors;
+
+    
 
     std::vector<sf::Text> titleScreenText;
     std::vector<sf::Text> mainMenuText;
@@ -108,6 +114,15 @@ public:
     bool isPauseAtBlack; // Check if black
     float pauseCounter;    // Counts time at black
     float transitionPause;
+
+    //For cutscenes
+    bool isCutsceneActive;
+    bool allowPlayerInput;
+    
+    void playNewGameCutscene();
+    void startCutscene();
+    void endCutscene();
+    void enablePlayerInput();
 
     Game();
     ~Game();

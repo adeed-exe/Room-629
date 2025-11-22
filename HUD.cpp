@@ -99,11 +99,11 @@ void HUD::update(float deltaTime, bool isRunning) {
 
     // Handle fatigue logic
     if (isRunning) {
-        fatigue += 15.f * deltaTime; // Accumulate fatigue
+        fatigue += 0.5f * deltaTime; // Accumulate fatigue
         if (fatigue > maxFatigue) fatigue = maxFatigue;
     }
     else {
-        fatigue -= 10.f * deltaTime; // Reduce fatigue
+        fatigue -= 0.1f * deltaTime; // Reduce fatigue
         if (fatigue < 0.f) fatigue = 0.f;
     }
 

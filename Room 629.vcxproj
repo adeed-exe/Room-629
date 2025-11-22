@@ -139,6 +139,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="CutsceneManager.cpp" />
     <ClCompile Include="Door.cpp" />
     <ClCompile Include="HUD.cpp" />
     <ClCompile Include="Item.cpp" />
@@ -160,6 +161,7 @@
     <ClCompile Include="ViewSystem.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CutsceneManager.h" />
     <ClInclude Include="Door.h" />
     <ClInclude Include="HUD.h" />
     <ClInclude Include="Item.h" />

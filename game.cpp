@@ -23,6 +23,7 @@ Game::Game()
     saveSystem = new SaveSystem(this);
     soundSystem = new SoundSystem(this);
     transition = new Transition(0.8f);
+    cutscene = new CutsceneManager();
 
     if (!saveSystem->fileExists(savePath)) {
         saveSystem->save(savePath, gameState);
@@ -48,6 +49,7 @@ Game::~Game() {
     delete transition;
     delete window;
     delete nightmare;
+    delete cutscene;
 }
 
 void Game::initVariables() {
@@ -81,6 +83,9 @@ void Game::initVariables() {
     nightmareAttacking = false;
     nightmareRunning = false;
 
+    isCutsceneActive = false;
+    allowPlayerInput = true;
+
     fadeRect.setSize({ 1920.f, 1080.f });
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
 }
@@ -112,24 +117,27 @@ void Game::initRooms() {
     r2.addItem(Item(3, sf::FloatRect({ 390.f, 64.f }, { 82.f, 200.f }), "Assets/Sprites/coffee.png"));
     rooms.emplace(2, std::move(r2));
 
-
-    std::cout << "======" << std::endl;
-    for (auto& [roomId, room] : rooms) {
-        std::cout << "Room " << roomId << " has " << room.getDoors().size() << " door: ";
-        for (const Door& d : room.getDoors()) {
-            std::cout << "Door ID: " << d.id
-                << " -> Target Room: " << d.targetRoomId << " || ";
+    //debugg for room
+    {
+        std::cout << "======" << std::endl;
+        for (auto& [roomId, room] : rooms) {
+            std::cout << "Room " << roomId << " has " << room.getDoors().size() << " door: ";
+            for (const Door& d : room.getDoors()) {
+                std::cout << "Door ID: " << d.id
+                    << " -> Target Room: " << d.targetRoomId << " || ";
+            }
+            std::cout << std::endl;
+            std::cout << "Room " << roomId << " has " << room.getItems().size() << " items: ";
+            for (Item& i : room.getItems()) {
+                std::cout << "Item ID: " << i.id
+                    << " -> Picked: " << gameState.roomInfo[gameState.currentRoomId] << " || ";
+            }
+            std::cout << std::endl;
         }
-        std::cout << std::endl;
-        std::cout << "Room " << roomId << " has " << room.getItems().size() << " items: ";
-        for (Item& i : room.getItems()) {
-            std::cout << "Item ID: " << i.id
-                << " -> Picked: " << gameState.roomInfo[gameState.currentRoomId] << " || ";
-        }
-        std::cout << std::endl;
+        std::cout << "======" << std::endl;
     }
-    std::cout << "======" << std::endl;
 }
+
 
 void Game::startNewGame() {
     gameState.items.clear();
@@ -138,6 +146,8 @@ void Game::startNewGame() {
     }
     saveSystem->reset(savePath, gameState);
     changeRoom(0);
+
+    playNewGameCutscene();
 }
 
 void Game::resetGame() {
@@ -173,6 +183,8 @@ void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
 
 
 void Game::inputHandler() {
+
+    //player movement
     playerRunning = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift);
     float moveSpeed = playerMoveSpeed;
     if (playerRunning && hud->stamina >= 1.f) moveSpeed *= 2.0f;
@@ -193,7 +205,8 @@ void Game::inputHandler() {
         playerJumping = true;
         playerVelocity.y = -(playerMoveSpeed + 100.f);
     }
-
+    
+    //button presses
     auto it = rooms.find(gameState.currentRoomId);
     if (!transition->getIsTransitioning() && sf::Keyboard::isKeyPressed(sf::Keyboard::Key::F)) {
         if (it != rooms.end()) {
@@ -238,6 +251,44 @@ void Game::nightmareAI() {
     }
 }
 
+void Game::startCutscene() {
+    isCutsceneActive = true;
+    allowPlayerInput = false;
+}
+
+void Game::endCutscene() {
+    isCutsceneActive = false;
+    // DO NOT enable input here, let the cutscene system handle it
+}
+
+void Game::enablePlayerInput() {
+    allowPlayerInput = true;
+}
+
+void Game::playNewGameCutscene() {
+    startCutscene(); // disable input
+
+    //Move right for 1 second at 50 speed
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(50.f, 0.f)));
+
+    //Wait 1 second
+    cutscene->addAction(new WaitAction(0.8f));
+
+    //Show dialogue
+    //cutscene->addAction(new DialogueAction("I will show a dialogue text when this happens"));
+
+    //Move left for 1 second at 50 speed
+    cutscene->addAction(new MoveAction(0.4f, sf::Vector2f(-50.f, 0.f)));
+
+    //Move right for 0.5 second at 50 speed
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(50.f, 0.f)));
+
+    //End cutscene
+    cutscene->addAction(new EndCutsceneAction());
+
+    cutscene->start();
+}
+
 void Game::update() {
     deltaTime = dtClock.restart().asSeconds();
 
@@ -258,7 +309,12 @@ void Game::update() {
 
     transition->update(deltaTime);
 
-    inputHandler();
+
+    cutscene->update(deltaTime, this);
+
+    if (allowPlayerInput) {
+        inputHandler();
+    }
 
     nightmareAI();
 
@@ -340,7 +396,7 @@ void Game::render() {
 }
 
 void Game::debug() {
-    // std::cout << player->getPlayer().getPosition().x << std::endl;
+    std::cout << player->getPlayer().getPosition().x << std::endl;
 }
 
 void Game::titleScreen() {
