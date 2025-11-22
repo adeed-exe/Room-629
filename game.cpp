@@ -11,6 +11,7 @@ Game::Game()
     menu = new Menu(this);
     hud = new HUD(this);
     nightmare = new Nightmare(this);
+    sir = new CutsceneSir(this);
 
     buildCaches();
     initRooms();
@@ -51,6 +52,7 @@ Game::~Game() {
     delete window;
     delete nightmare;
     delete cutscene;
+    delete sir;
 }
 
 void Game::initVariables() {
@@ -86,6 +88,7 @@ void Game::initVariables() {
 
     isCutsceneActive = false;
     allowPlayerInput = true;
+    sirPos = sf::Vector2f({ 1100.f, ground });
 
     fadeRect.setSize({ 1920.f, 1080.f });
     fadeRect.setFillColor(sf::Color(0, 0, 0, 0));
@@ -264,33 +267,44 @@ void Game::enablePlayerInput() {
     allowPlayerInput = true;
 }
 
+
+
 void Game::playNewGameCutscene() {
+    sirPos.x = 1850.f;
+    sirPos.y = ground - 41.f;
+
     startCutscene(); // disable input
 
     /* cutscene desc
     
-    Move right for 1 second at 50 speed
-    Wait 1 second
+    Move right 
+    Wait 3 second
     Show dialogue
-    Move left for 1 second at 50 speed
-    Move right for 0.5 second at 50 speed
+    Move left
+    Move right 
     End cutscene*/
 
 
     
         
     //cutscene->addAction(new DialogueAction("I will show a dialogue text when this happens"));
-    cutscene->addAction(new WaitAction(0.3f));
-       
-    cutscene->addAction(new MoveAction(0.4f, sf::Vector2f(-150.f, 0.f)));
+    cutscene->addAction(new WaitAction(0.4f));
 
-    cutscene->addAction(new MoveAction(0.4f, sf::Vector2f(-150.f, 0.f)));
+
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
+
 
     cutscene->addAction(new WaitAction(3.f));
 
-    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
 
-    
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+
     cutscene->addAction(new EndCutsceneAction());
 
     cutscene->start();
@@ -322,6 +336,10 @@ void Game::update() {
     if (allowPlayerInput) {
         inputHandler();
     }
+    if (cutscene->isRunning()) {
+
+        sir->animateIdle();   // update your frame animation
+    }
 
     nightmareAI();
 
@@ -347,6 +365,9 @@ void Game::update() {
 void Game::render() {
     window->clear();
     window->draw(background);
+    if (cutscene->isRunning()) {
+        window->draw(sir->getSir());
+    }
 
     if (!isInMenu && !isInControlsMenu && !isInTitleScreen && !isInConfirmationMenu) {
         window->setView(viewSystem->getView());

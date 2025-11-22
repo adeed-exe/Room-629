@@ -4,6 +4,29 @@
 
 class Game;
 
+class CutsceneSir {
+private:
+    Game* game; // Pointer to the main game instance
+
+    // Textures for the sir
+    sf::Texture sirTexture;
+
+    float frameTimer;
+    int idleX, totalIdle;
+    int frameWidth, frameHeight;
+    float scale;
+    sf::Vector2f pos;
+
+    void initSir();
+
+public:
+    sf::Sprite sir;
+
+    CutsceneSir(Game* gamePtr);
+    void animateIdle();
+    sf::Sprite& getSir();
+};
+
 class CutsceneAction {
 public:
     virtual ~CutsceneAction() = default;

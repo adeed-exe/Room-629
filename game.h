@@ -15,6 +15,7 @@
 #include "CutsceneManager.h"
 
 class CutsceneManager;
+class CutsceneSir;
 
 class Game {
 private:
@@ -57,6 +58,7 @@ public:
     SoundSystem* soundSystem;
     Nightmare* nightmare;
     CutsceneManager* cutscene;
+    CutsceneSir* sir;
 
 
     sf::Sprite background;
@@ -117,6 +119,7 @@ public:
     float transitionPause;
 
     //For cutscenes
+    sf::Vector2f sirPos;
     bool isCutsceneActive;
     bool allowPlayerInput;
     

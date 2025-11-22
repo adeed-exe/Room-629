@@ -1,6 +1,51 @@
 #include "PCH.h"
 #include "CutsceneManager.h"
 
+
+//-----Sir Animation Sprite ------
+
+void CutsceneSir::initSir() {
+    frameTimer = 0.f;
+
+    idleX = 0; totalIdle = 8;
+
+    frameWidth = 43;
+    frameHeight = 43;
+    scale = game->scale;
+    pos = game->sirPos;
+
+    if (sirTexture.loadFromFile("Assets/Sprites/sir_idle_8.png")) {
+        std::cout << "Player texture [SIR_IDLE_8] loaded!" << std::endl;
+    }
+
+    sir.setTextureRect(sf::IntRect({ idleX * frameWidth, 0 }, { frameWidth, frameHeight }));
+    sir.setScale({ -scale, scale });
+    sir.setOrigin({ frameWidth / 2.f, frameHeight / 2.f });
+    sir.setPosition(pos);
+}
+
+void CutsceneSir::animateIdle() {
+    pos = game->sirPos;
+    frameTimer += game->deltaTime;
+    if (frameTimer >= game->animationSpeed) {
+        frameTimer = 0.f;
+        sir.setTexture(sirTexture);
+        sir.setTextureRect(sf::IntRect({ idleX * frameWidth, 0 }, { frameWidth, frameHeight }));
+        idleX = (idleX + 1) % totalIdle;
+        sir.setPosition(pos);
+    }
+}
+
+CutsceneSir::CutsceneSir(Game* gamePtr) : game(gamePtr), sir(sirTexture)
+{
+    initSir();
+}
+
+sf::Sprite& CutsceneSir::getSir() {
+    return sir;
+}
+
+//Cutscene Creator
 void CutsceneManager::start() {
     running = true;
 }
