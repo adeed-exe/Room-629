@@ -1,10 +1,12 @@
 #pragma once
 #include "PCH.h"
+#include "HUD.h"
 
 struct Item {
-    int id = 0;
+    int roomId = 0;
+    int itemId = 0;
     sf::FloatRect bounds{};
-    std::string texturePath;
+    sf::Vector2f drawPos;
 
-    Item(int _id, const sf::FloatRect& _bounds, std::string _texturePath);
+    Item(int _roomId, int _itemId, const sf::FloatRect& _bounds, const sf::Vector2f _drawPos);
 };

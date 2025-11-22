@@ -76,6 +76,7 @@ public:
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;
     std::vector<sf::Text> confirmationMenuText;
+    std::vector<sf::Sprite> itemSprites;
 
     GameState gameState;
     const std::string savePath = "Assets/Save Files/saveFile.sav";

@@ -38,6 +38,7 @@ void Player::initPlayer() {
     playerChar.setPosition({ 1920 / 2, game->ground });
 
     interactButton.setTexture(interactButtonTexture, true);
+    interactButton.setOrigin(interactButton.getGlobalBounds().size / 2.f);
 }
 
 Player::Player(Game* gamePtr) : game(gamePtr), playerChar(playerTexture), interactButton(interactButtonTexture) {
