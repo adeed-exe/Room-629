@@ -20,6 +20,11 @@ class CutsceneSir;
 class Game {
 private:
     sf::Texture backgroundTexture;
+    sf::Texture titleScreenBackgroundTexture;
+    sf::Texture menuBackgroundTexture;
+    sf::Texture leftHandTexture;
+    sf::Texture rightHandTexture;
+    sf::Texture rightHandClickTexture;
 
     void initVariables();
     void initWindow();
@@ -63,6 +68,9 @@ public:
 
     sf::Sprite background;
     sf::Sprite titleScreenBackground;
+    sf::Sprite menuBackground;
+    sf::Sprite menuLeftHand;
+    sf::Sprite menuRightHand;
     sf::RectangleShape fadeRect;
 
     float deltaTime;

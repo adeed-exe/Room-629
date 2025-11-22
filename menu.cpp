@@ -24,7 +24,7 @@ void Menu::initMenu() {
         mainMenuText.push_back(text);
     }
 
-    std::vector<std::string> controlsMenuLabels = { "Move Left : A", "Move Right : D", "Jump : Space", "Sprint : Hold Shift", "Back" };
+    std::vector<std::string> controlsMenuLabels = { "Move Left : A", "Move Right : D", "Jump : Space", "Sprint : Shift", "Back" };
 
     for (int i = 0; i < 5; i++) {
         text.setString(controlsMenuLabels[i]);

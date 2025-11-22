@@ -2,7 +2,8 @@
 #include "Game.h"
 
 Game::Game()
-    : background(backgroundTexture), titleScreenBackground(backgroundTexture)
+    : background(backgroundTexture), titleScreenBackground(titleScreenBackgroundTexture), menuBackground(menuBackgroundTexture),
+    menuLeftHand(leftHandTexture), menuRightHand(rightHandTexture)
 {
     initVariables();
     initWindow();
@@ -35,8 +36,35 @@ Game::Game()
         std::cout << "Title Screen texture loaded!" << std::endl;
     }
 
+    sf::Vector2f scaleRatio{ 1920.f / backgroundTexture.getSize().x, 1080.f / backgroundTexture.getSize().y };
+
     titleScreenBackground.setTexture(backgroundTexture, true);
-    titleScreenBackground.setScale(sf::Vector2f({ 1920.f / backgroundTexture.getSize().x, 1080.f / backgroundTexture.getSize().y }));
+    titleScreenBackground.setScale(scaleRatio);
+
+    if (menuBackgroundTexture.loadFromFile("Assets/Sprites/BG_menu.png")) {
+        std::cout << "Menu texture loaded!" << std::endl;
+    }
+
+    menuBackground.setTexture(menuBackgroundTexture, true);
+    menuBackground.setScale(scaleRatio);
+    
+    if (leftHandTexture.loadFromFile("Assets/Sprites/BG_menu_left_hand.png")) {
+        std::cout << "Menu left hand texture loaded!" << std::endl;
+    }
+
+    menuLeftHand.setTexture(leftHandTexture, true);
+    menuLeftHand.setScale(scaleRatio);
+    
+    if (rightHandTexture.loadFromFile("Assets/Sprites/BG_menu_right_hand.png")) {
+        std::cout << "Menu right hand texture loaded!" << std::endl;
+    }
+
+    menuRightHand.setTexture(rightHandTexture, true);
+    menuRightHand.setScale(scaleRatio);
+    
+    if (rightHandClickTexture.loadFromFile("Assets/Sprites/BG_menu_right_hand_click.png")) {
+        std::cout << "Menu right hand texture loaded!" << std::endl;
+    }
 
     soundSystem->playBackgroundMusic();
 }
@@ -407,20 +435,25 @@ void Game::render() {
                 window->draw(titleScreenText[i]);
             }
         }
-        if (isInMenu) {
-            for (int i = 0; i < mainMenuText.size(); i++) {
-                window->draw(mainMenuText[i]);
+        else {
+            window->draw(menuBackground);
+            if (isInMenu) {
+                for (int i = 0; i < mainMenuText.size(); i++) {
+                    window->draw(mainMenuText[i]);
+                }
             }
-        }
-        else if (isInControlsMenu) {
-            for (int i = 0; i < controlsMenuText.size(); i++) {
-                window->draw(controlsMenuText[i]);
+            else if (isInControlsMenu) {
+                for (int i = 0; i < controlsMenuText.size(); i++) {
+                    window->draw(controlsMenuText[i]);
+                }
             }
-        }
-        else if (isInConfirmationMenu) {
-            for (int i = 0; i < confirmationMenuText.size(); i++) {
-                window->draw(confirmationMenuText[i]);
+            else if (isInConfirmationMenu) {
+                for (int i = 0; i < confirmationMenuText.size(); i++) {
+                    window->draw(confirmationMenuText[i]);
+                }
             }
+            window->draw(menuLeftHand);
+            window->draw(menuRightHand);
         }
     }
 
@@ -461,10 +494,19 @@ void Game::titleScreen() {
 
 void Game::mainMenu() {
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
+    window->setMouseCursorVisible(false);
+    menuRightHand.setPosition({ mousePos.x - 20.f, mousePos.y - 20.f });
+    bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+    if (isMousePressed) {
+        menuRightHand.setTexture(rightHandClickTexture, true);
+        menuRightHand.move({ -18, 0 });
+    }
+    else {
+        menuRightHand.setTexture(rightHandTexture, true);
+    }
     for (int i = 0; i < mainMenuText.size(); i++) {
         if (mainMenuText[i].getGlobalBounds().contains(mousePos)) {
             mainMenuText[i].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
-            bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
             if (isMousePressed && !isMouseHeld) {
                 soundSystem->playButtonSound();
                 if (i == 0) { // Continue
@@ -495,9 +537,18 @@ void Game::mainMenu() {
 
 void Game::controlsMenu() {
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
+    window->setMouseCursorVisible(false);
+    menuRightHand.setPosition({ mousePos.x - 20.f, mousePos.y - 20.f });
+    bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+    if (isMousePressed) {
+        menuRightHand.setTexture(rightHandClickTexture, true);
+        menuRightHand.move({ -18, 0 });
+    }
+    else {
+        menuRightHand.setTexture(rightHandTexture, true);
+    }
     if (controlsMenuText[4].getGlobalBounds().contains(mousePos)) {
         controlsMenuText[4].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
-        bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
         if (isMousePressed && !isMouseHeld) {
             soundSystem->playButtonSound();
             isInMenu = true;
@@ -512,10 +563,19 @@ void Game::controlsMenu() {
 
 void Game::confirmationMenu() {
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
+    window->setMouseCursorVisible(false);
+    menuRightHand.setPosition({ mousePos.x - 20.f, mousePos.y - 20.f });
+    bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
+    if (isMousePressed) {
+        menuRightHand.setTexture(rightHandClickTexture, true);
+        menuRightHand.move({ -18, 0 });
+    }
+    else {
+        menuRightHand.setTexture(rightHandTexture, true);
+    }
     for (int i = 1; i < confirmationMenuText.size(); i++) {
         if (confirmationMenuText[i].getGlobalBounds().contains(mousePos)) {
             confirmationMenuText[i].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
-            bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
             if (isMousePressed && !isMouseHeld) {
                 soundSystem->playButtonSound();
                 if (i == 1) { // No
@@ -583,7 +643,6 @@ void Game::run() {
             if (event->is<sf::Event::Closed>()) {
                 window->close();
             }
-
             // Toggle main menu
             bool isEscapePressed = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::Escape);
             if (isEscapePressed && !isEscapeHeld && !isInTitleScreen) {
@@ -604,6 +663,7 @@ void Game::run() {
             confirmationMenu();
         }
         else {
+            window->setMouseCursorVisible(true);
             update();
         }
         render();
