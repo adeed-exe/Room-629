@@ -268,22 +268,30 @@ void Game::enablePlayerInput() {
 void Game::playNewGameCutscene() {
     startCutscene(); // disable input
 
-    //Move right for 1 second at 50 speed
-    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(50.f, 0.f)));
+    /* cutscene desc
+    
+    Move right for 1 second at 50 speed
+    Wait 1 second
+    Show dialogue
+    Move left for 1 second at 50 speed
+    Move right for 0.5 second at 50 speed
+    End cutscene*/
 
-    //Wait 1 second
-    cutscene->addAction(new WaitAction(0.8f));
 
-    //Show dialogue
+    
+        
     //cutscene->addAction(new DialogueAction("I will show a dialogue text when this happens"));
+    cutscene->addAction(new WaitAction(0.3f));
+       
+    cutscene->addAction(new MoveAction(0.4f, sf::Vector2f(-150.f, 0.f)));
 
-    //Move left for 1 second at 50 speed
-    cutscene->addAction(new MoveAction(0.4f, sf::Vector2f(-50.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.4f, sf::Vector2f(-150.f, 0.f)));
 
-    //Move right for 0.5 second at 50 speed
-    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(50.f, 0.f)));
+    cutscene->addAction(new WaitAction(3.f));
 
-    //End cutscene
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
+
+    
     cutscene->addAction(new EndCutsceneAction());
 
     cutscene->start();

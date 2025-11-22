@@ -15,6 +15,9 @@ void CutsceneManager::update(float dt, Game* game) {
     CutsceneAction* current = actions.front();
 
     if (current->update(dt, game)) {
+
+        game->playerVelocity = { 0.f, 0.f };
+
         delete current;
         actions.pop();
 
