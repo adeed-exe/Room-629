@@ -25,6 +25,7 @@ private:
     sf::Texture leftHandTexture;
     sf::Texture rightHandTexture;
     sf::Texture rightHandClickTexture;
+    sf::Texture cursorTexture;
 
     void initVariables();
     void initWindow();
@@ -71,6 +72,7 @@ public:
     sf::Sprite menuBackground;
     sf::Sprite menuLeftHand;
     sf::Sprite menuRightHand;
+    sf::Sprite cursor;
     sf::RectangleShape fadeRect;
 
     float deltaTime;
@@ -79,8 +81,6 @@ public:
     std::map<int, Room> rooms;
 
     std::vector<Door*> doors;
-
-    
 
     std::vector<sf::Text> titleScreenText;
     std::vector<sf::Text> mainMenuText;
@@ -108,6 +108,7 @@ public:
     int lastMenuAction; // 0 = New game, 1 = Exit;
 
     bool isMouseHeld, isEscapeHeld;
+    bool cursorTriggered;
     bool isEnterHeld;
 
     sf::Vector2f playerVelocity;
