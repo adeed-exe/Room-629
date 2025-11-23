@@ -106,6 +106,7 @@ public:
     bool isInTitleScreen, isInMenu;
     bool isInControlsMenu, isInConfirmationMenu;
     int lastMenuAction; // 0 = New game, 1 = Exit;
+    bool toMenu = false;
 
     bool isMouseHeld, isEscapeHeld;
     bool cursorTriggered;
@@ -133,6 +134,7 @@ public:
     bool allowPlayerInput;
     
     void playNewGameCutscene();
+    void cutsceneOfficeRoom();
     void startCutscene();
     void endCutscene();
     void enablePlayerInput();

@@ -19,7 +19,7 @@ void CutsceneSir::initSir() {
     }
 
     sir.setTextureRect(sf::IntRect({ idleX * frameWidth, 0 }, { frameWidth, frameHeight }));
-    sir.setScale({ -scale, scale });
+    sir.setScale({ -(scale+0.4f), scale+0.4f });
     sir.setOrigin({ frameWidth / 2.f, frameHeight / 2.f });
     sir.setPosition(pos);
 }
@@ -99,6 +99,19 @@ bool MoveAction::update(float dt, Game* game) {
         // Action finished: reset velocity so player stops moving
         game->playerVelocity.x = 0.f;
         game->playerVelocity.y = 0.f;
+        return true;
+    }
+
+    return false;
+}
+
+bool TurnAction::update(float dt, Game* game) {
+    timeLeft -= dt;
+
+    if (timeLeft <= 0.f) {
+        // Action finished: reset velocity so player stops moving
+        sf::Vector2f scale = game->player->getPlayer().getScale();
+        game->player->getPlayer().setScale({ scale.x * (-1), scale.y });
         return true;
     }
 

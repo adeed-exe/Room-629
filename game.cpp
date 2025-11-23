@@ -143,19 +143,31 @@ void Game::buildCaches() {
 }
 
 void Game::initRooms() {
-    Room r0(0, "Assets/Sprites/BG_room629.png", { 1253.f, ground });
+    Room r0(0, "Assets/Sprites/BG_room629.png", { 930.f, ground });
     r0.addDoor(Door(0, sf::FloatRect({ 1228.f, 64.f }, { 82.f, 200.f }), 1, { 100.f, ground }));
     rooms.emplace(0, std::move(r0));
 
     Room r1(1, "Assets/Sprites/BG_hallway_6.png", { 100.f, ground });
     r1.addDoor(Door(0, sf::FloatRect({ 30.f, 64.f }, { 82.f, 200.f }), 0, { 1253.f, ground }));
     r1.addDoor(Door(1, sf::FloatRect({ 1115.f, 64.f }, { 82.f, 200.f }), 2, { 550.f, ground }));
+    r1.addDoor(Door(2, sf::FloatRect({ 1010.f, 64.f }, { 82.f, 200.f }), 3, { 1010.f, ground }));
     rooms.emplace(1, std::move(r1));
 
     Room r2(2, "Assets/Sprites/BG_office_room.png", { 100.f, ground });
     r2.addDoor(Door(0, sf::FloatRect({ 550.f, 64.f }, { 82.f, 200.f }), 1, { 1120.f, ground }));
     r2.addItem(Item(2, 0, sf::FloatRect({ 445.f, 64.f }, { 82.f, 300.f }), { 489.f, 97.f }));
     rooms.emplace(2, std::move(r2));
+
+    Room r3(3, "Assets/Sprites/BG_hallway_3.png", { 1000.f, ground });
+    r3.addDoor(Door(0, sf::FloatRect({ 30.f, 64.f }, { 82.f, 200.f }), 4, { 1253.f, ground }));
+    r3.addDoor(Door(1, sf::FloatRect({ 762.f, 64.f }, { 82.f, 200.f }), 1, { 762.f, ground }));
+    //r3.addItem(Item(3, 0, sf::FloatRect({ 445.f, 64.f }, { 82.f, 300.f }), { 489.f, 97.f }));
+    rooms.emplace(3, std::move(r3));
+
+    Room r4(4, "Assets/Sprites/BG_room629.png", { 930.f, ground });
+    r4.addDoor(Door(0, sf::FloatRect({ 1228.f, 64.f }, { 82.f, 200.f }), 3, { 100.f, ground }));
+    rooms.emplace(4, std::move(r4));
+
 
 
     std::cout << "======" << std::endl;
@@ -218,6 +230,8 @@ void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
         saveSystem->save(savePath, gameState);
         },400.f, 500.f, 0.8f);
 }
+
+
 
 
 void Game::inputHandler() {
@@ -305,8 +319,8 @@ void Game::enablePlayerInput() {
 
 
 void Game::playNewGameCutscene() {
-    sirPos.x = 1850.f;
-    sirPos.y = ground - 41.f;
+    sirPos.x = 1250.f;
+    sirPos.y = ground-2.f;
 
     startCutscene(); // disable input
 
@@ -320,20 +334,34 @@ void Game::playNewGameCutscene() {
     End cutscene*/
         
     //cutscene->addAction(new DialogueAction("I will show a dialogue text when this happens"));
-    cutscene->addAction(new WaitAction(0.4f));
+    cutscene->addAction(new WaitAction(0.8f));
+
+    cutscene->addAction(new TurnAction(1.f));
+    cutscene->addAction(new TurnAction(1.5f));
+
+    cutscene->addAction(new WaitAction(0.8f));
+
+
+    cutscene->addAction(new DialogueAction("Where's everyone? Did I doze off again", 3.f));
+    cutscene->addAction(new DialogueAction("Teacher: I was waiting for you to wake up..", 3.f));
 
 
     cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
     cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
     cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
-    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
-    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
 
+    cutscene->addAction(new WaitAction(0.2f));
+    
 
-    cutscene->addAction(new WaitAction(3.f));
+    cutscene->addAction(new DialogueAction(". . .", 1.f));
+    cutscene->addAction(new DialogueAction("Teacher : Everyone has already left.", 3.f));
+    cutscene->addAction(new DialogueAction("Teacher : I had some work left here, and I need some help..", 3.f));
+    cutscene->addAction(new DialogueAction("Teacher : Since you are here already..", 3.f));
+    cutscene->addAction(new DialogueAction("Sorry Sir, I was feeling extremely tired. But I feel okay right now.", 3.f));
+    cutscene->addAction(new DialogueAction("Teacher : It would be great if you could get me my papers from room Gallery-2.", 3.5f));
+    cutscene->addAction(new DialogueAction("Teacher : It's on the Table.", 3.f));
 
-    cutscene->addAction(new DialogueAction("aaaaaaaaaaaAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 3.f));
-
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
     cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
     cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
     cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
@@ -341,6 +369,60 @@ void Game::playNewGameCutscene() {
     cutscene->addAction(new EndCutsceneAction());
 
     cutscene->start();
+
+
+    gameState.progress = 1;
+
+    saveSystem->save(savePath, gameState);
+}
+
+
+void Game::cutsceneOfficeRoom() {
+    sirPos.x = 100.806f;
+    sirPos.y = ground-2.f;
+
+    sir->getSir().setScale({ sir->getSir().getScale().x * (-1), sir->getSir().getScale().y });
+
+    startCutscene(); // disable input
+
+    /* cutscene desc
+
+    Look about
+    sir talks
+    Wait 
+    goes toward sir
+    show dialogues   
+    goes toward door
+    End cutscene*/
+
+    //cutscene->addAction(new DialogueAction("I will show a dialogue text when this happens"));
+    cutscene->addAction(new WaitAction(0.4f));
+    
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+
+    cutscene->addAction(new DialogueAction("Teacher : You got the papers, right?", 3.f));
+    gameState.items.erase(3);
+    saveSystem->save(savePath, gameState);
+    cutscene->addAction(new DialogueAction("*Player gives the paper to Teacher*", 3.f));
+    cutscene->addAction(new DialogueAction("Teacher : Alright, you can go. Thanks for the help. See you tomorrow.", 3.f));
+    cutscene->addAction(new DialogueAction("Player : See you tomorrow, Sir.", 3.f));
+    //cutscene->addAction(new DialogueAction("I should go to home.", 3.f));
+   /* cutscene->addAction(new DialogueAction("", 3.f));
+    cutscene->addAction(new DialogueAction("", 3.f));
+    cutscene->addAction(new DialogueAction("", 3.f));
+    cutscene->addAction(new DialogueAction("", 3.f));
+    cutscene->addAction(new DialogueAction("", 3.f));
+    cutscene->addAction(new DialogueAction("", 3.f));*/
+
+
+    cutscene->addAction(new EndCutsceneAction());
+
+    cutscene->start();
+
 }
 
 void Game::update() {
@@ -393,6 +475,29 @@ void Game::update() {
 
     viewSystem->update(player->getPlayer().getPosition());
     hud->update(deltaTime, playerRunning && playerVelocity.x != 0.f);
+
+    if (gameState.progress == 1 && gameState.currentRoomId == 2) {
+        auto it = gameState.items.find(3);
+        if (it != gameState.items.end())
+        {
+            cutsceneOfficeRoom();            
+        }
+
+        if (!cutscene->isRunning()) {
+
+            changeRoom(1, { 1120.f, ground });
+
+
+            gameState.progress = 2;
+
+            saveSystem->save(savePath, gameState);
+
+            cutscene->start();
+            cutscene->addAction(new WaitAction(4.f));
+
+            cutscene->addAction(new DialogueAction("I should go home..", 3.f));
+        }
+    }
 }
 
 void Game::render() {
@@ -410,6 +515,8 @@ void Game::render() {
         if (hud->subtitleVisible) {
             window->draw(hud->subtitleText);
         }
+         
+        hud->render(*window);
 
         auto it = rooms.find(gameState.currentRoomId);
         if (it != rooms.end()) {
@@ -474,7 +581,7 @@ void Game::render() {
 void Game::debug() {
     // sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
     // std::cout << mousePos.x << " " << mousePos.y << std::endl;
-    // std::cout << player->getPlayer().getPosition().x << std::endl;
+    std::cout << player->getPlayer().getPosition().x << std::endl;
 }
 
 void Game::titleScreen() {

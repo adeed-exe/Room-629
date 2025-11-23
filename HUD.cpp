@@ -64,7 +64,7 @@ void HUD::initHUD() {
     
     // Subtitle
     subtitleText.setFont(font);
-    subtitleText.setCharacterSize(100);
+    subtitleText.setCharacterSize(15);
     subtitleText.setFillColor(sf::Color::Yellow);
     subtitleText.setOutlineColor(sf::Color::Black);
     subtitleText.setOutlineThickness(2.f);
@@ -124,6 +124,8 @@ void HUD::update(float deltaTime, bool isRunning) {
     fatigueBarBack.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), 15 });
     fatigueBarFront.setPosition({ std::max(fatigueOffsetLeft, std::min(fatigueOffsetRight, game->player->getPlayer().getPosition().x + 190)), 15 });
     itemText.setPosition({ std::max(itemOffsetLeft, std::min(itemOffsetRight, game->player->getPlayer().getPosition().x - 226.7f)), 282.5f });
+    subtitleText.setPosition({ game->player->getPlayer().getPosition().x , game->player->getPlayer().getPosition().y + 96.42f });
+
 
     std::multiset<int> temp = game->gameState.items;
     bool deleting = false;
@@ -167,7 +169,7 @@ void HUD::update(float deltaTime, bool isRunning) {
     //show subtitle only for the given time
     if (subtitleVisible)
     {
-        std::cout << "HUD subtitle drawn\n";
+        //std::cout << "HUD subtitle drawn\n";
         subtitleTimer -= deltaTime;
         if (subtitleTimer <= 0.f)
         {
@@ -177,27 +179,30 @@ void HUD::update(float deltaTime, bool isRunning) {
 }
 void HUD::render(sf::RenderWindow& window) 
 {
-    window.draw(itemText);
+    if (game->allowPlayerInput) {
+        window.draw(itemText);
 
-    window.draw(staminaBarBack);
-    window.draw(staminaBarFront);
+        window.draw(staminaBarBack);
+        window.draw(staminaBarFront);
 
-    window.draw(fatigueBarBack);
-    window.draw(fatigueBarFront);
+        window.draw(fatigueBarBack);
+        window.draw(fatigueBarFront);
 
-    int index = 0;
-    for (auto& i : game->gameState.items) {
-        itemSprites[i].setPosition({ itemOffset + itemText.getPosition().x + index * 30.f, itemText.getPosition().y });
-        window.draw(itemSprites[i]);
-        index++;
+        int index = 0;
+        for (auto& i : game->gameState.items) {
+            itemSprites[i].setPosition({ itemOffset + itemText.getPosition().x + index * 30.f, itemText.getPosition().y });
+            window.draw(itemSprites[i]);
+            index++;
+        }
+
+        //// ONLY draw when visible!
+        //if (subtitleVisible) {
+        //    std::cout << "HUD RENDER subtitle drawn\n";
+        //    //std::cout << "hud pos : ";
+        //    window.draw(subtitleText);
+        //}
     }
-
-    //// ONLY draw when visible!
-    //if (subtitleVisible) {
-    //    std::cout << "HUD RENDER subtitle drawn\n";
-    //    //std::cout << "hud pos : ";
-    //    window.draw(subtitleText);
-    //}
+    
 }
 
 void HUD::showSubtitle(const std::string& text, float duration)

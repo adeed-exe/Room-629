@@ -53,6 +53,8 @@ public:
     void update(float deltaTime, bool isRunning);
     void render(sf::RenderWindow& window);
 
+    void removeItem(int id);
+
     void showSubtitle(const std::string& text, float duration);
     void hideSubtitle();
 

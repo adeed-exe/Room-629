@@ -61,6 +61,20 @@ public:
     bool update(float dt, Game* game) override;
 };
 
+class TurnAction : public CutsceneAction {
+private:
+    float timeLeft;
+    sf::Vector2f velocity;
+    float scale = 4.f;
+
+public:
+    TurnAction(float duration)
+        : timeLeft(duration) {
+    }
+
+    bool update(float dt, Game* game) override;
+};
+
 
 class DialogueAction : public CutsceneAction {
 private:
