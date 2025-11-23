@@ -176,8 +176,6 @@ void Game::initRooms() {
     r4.addDoor(Door(0, sf::FloatRect({ 1228.f, 64.f }, { 82.f, 200.f }), 3, { 100.f, ground }));
     rooms.emplace(4, std::move(r4));
 
-
-
     std::cout << "======" << std::endl;
     for (auto& [roomId, room] : rooms) {
         std::cout << "Room " << roomId << " has " << room.getDoors().size() << " door: ";
@@ -467,9 +465,11 @@ void Game::update() {
         }
         vignette.setColor(sf::Color(255, 255, 255, vignetteAlpha));
         nightmareAI();
+        soundSystem->playStaticSound();
     }
     else {
         nightmare->getNightmare().setPosition({ 1920, ground + 22 });
+        soundSystem->stopStaticSound();
     }
 
     if (hud->fatigue >= 99) {

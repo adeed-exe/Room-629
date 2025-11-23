@@ -4,7 +4,8 @@
 
 SoundSystem::SoundSystem(Game* gamePtr)
 	: game(gamePtr), backgroundMusic(backgroundBuffer), footstepSound(footstepBuffer),
-	buttonSound(buttonBuffer), startSound(startBuffer), doorSound(doorBuffer)
+	buttonSound(buttonBuffer), startSound(startBuffer), doorSound(doorBuffer),
+	staticSound(staticBuffer)
 {
 	initSounds();
 }
@@ -35,6 +36,13 @@ void SoundSystem::initSounds() {
 		std::cout << "Background music loaded!" << std::endl;
 	}
 	doorSound.setBuffer(doorBuffer);
+
+	if (staticBuffer.loadFromFile("Assets/Sounds/static.wav")) {
+		std::cout << "Background music loaded!" << std::endl;
+	}
+	staticSound.setBuffer(staticBuffer);
+	staticSound.setLooping(true);
+	staticSound.setVolume(60.f);
 }
 
 void SoundSystem::playBackgroundMusic() {
@@ -58,4 +66,14 @@ void SoundSystem::playStartSound() {
 
 void SoundSystem::playDoorSound() {
 	doorSound.play();
+}
+
+void SoundSystem::playStaticSound() {
+	if (staticSound.getStatus() != sf::Music::Status::Playing) {
+		staticSound.play();
+	}
+}
+
+void SoundSystem::stopStaticSound() {
+	staticSound.stop();
 }
