@@ -8,13 +8,13 @@ class Menu {
 private:
     Game* game; // Pointer to the main game instance
 
-    sf::Font font; // Font for the UI text
+    sf::Font font1, font2; // Font for the UI text
 
     void initMenu(); // Load texture and set initial values
 
 public:
     // UI buttons
-    sf::Text text;
+    sf::Text text1, text2;
     std::vector<sf::Text> titleScreenText;
     std::vector<sf::Text> mainMenuText;
     std::vector<sf::Text> controlsMenuText;

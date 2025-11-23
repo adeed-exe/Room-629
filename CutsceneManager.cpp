@@ -109,11 +109,29 @@ bool MoveAction::update(float dt, Game* game) {
 bool EndCutsceneAction::update(float dt, Game* game) {
     game->endCutscene();
     game->enablePlayerInput();
+
+
+    float fadeOutSpeed = 1200.f; 
+    float fadeInSpeed = 1000.f;
+    float fadePause = 0.5f;
+
+    game->transition->start(nullptr, fadeOutSpeed, fadeInSpeed, fadePause);
+
+
     return true;
 }
 
 
 bool DialogueAction::update(float dt, Game* game)
 {
-    return false;
+    if (!started)
+    {
+        std::cout << "subtitles shown " << std::endl;
+        game->hud->showSubtitle(text, duration);
+        started = true;
+    }
+
+    // countdown until finished
+    duration -= dt;
+    return duration <= 0.f;
 }

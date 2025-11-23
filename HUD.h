@@ -43,12 +43,18 @@ public:
     float fatigue;
     float maxFatigue;
 
+    // Subtitle control
+    sf::Vector2f subtitlePos; 
+    float subtitleTimer = 0.f;
+    bool subtitleVisible = false;
+
     HUD(Game* gamePtr);
 
     void update(float deltaTime, bool isRunning);
     void render(sf::RenderWindow& window);
 
-    void setSubtitle(const std::string& text);
+    void showSubtitle(const std::string& text, float duration);
+    void hideSubtitle();
 
     sf::RectangleShape& getHud();
 };

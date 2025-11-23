@@ -61,15 +61,18 @@ public:
     bool update(float dt, Game* game) override;
 };
 
+
 class DialogueAction : public CutsceneAction {
 private:
     std::string text;
-    bool shown = false;
+    float duration;
+    bool started;
+
 public:
-    DialogueAction(const std::string& t) : text(t) {}
+    DialogueAction(const std::string& t, float d) : text(t), duration(d), started(false) {}
+
     bool update(float dt, Game* game) override;
 };
-
 
 class EndCutsceneAction : public CutsceneAction {
 public:

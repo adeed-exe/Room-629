@@ -3,7 +3,7 @@
 #include "Game.h"
 
 void HUD::initHUD() {
-    if (!font.openFromFile("Assets/Fonts/ui.ttf")) {
+    if (!font.openFromFile("Assets/Fonts/Belanosima-Regular.ttf")) {
         std::cout << "Failed to load HUD font!" << std::endl;
     }
 
@@ -64,10 +64,11 @@ void HUD::initHUD() {
     
     // Subtitle
     subtitleText.setFont(font);
-    subtitleText.setCharacterSize(28);
-    subtitleText.setFillColor(sf::Color::White);
+    subtitleText.setCharacterSize(100);
+    subtitleText.setFillColor(sf::Color::Yellow);
     subtitleText.setOutlineColor(sf::Color::Black);
     subtitleText.setOutlineThickness(2.f);
+    subtitleText.setOrigin(itemText.getLocalBounds().size / 2.f);
     subtitleText.setPosition(sf::Vector2f(1920.f / 2.f - 300.f, 900.f)); // Bottom center-ish 
 
     // Item text
@@ -162,10 +163,20 @@ void HUD::update(float deltaTime, bool isRunning) {
 
         }
     }
+
+    //show subtitle only for the given time
+    if (subtitleVisible)
+    {
+        std::cout << "HUD subtitle drawn\n";
+        subtitleTimer -= deltaTime;
+        if (subtitleTimer <= 0.f)
+        {
+            subtitleVisible = false;
+        }
+    }
 }
-
-void HUD::render(sf::RenderWindow& window) {
-
+void HUD::render(sf::RenderWindow& window) 
+{
     window.draw(itemText);
 
     window.draw(staminaBarBack);
@@ -174,23 +185,37 @@ void HUD::render(sf::RenderWindow& window) {
     window.draw(fatigueBarBack);
     window.draw(fatigueBarFront);
 
-    window.draw(subtitleText);
-	
     int index = 0;
     for (auto& i : game->gameState.items) {
         itemSprites[i].setPosition({ itemOffset + itemText.getPosition().x + index * 30.f, itemText.getPosition().y });
         window.draw(itemSprites[i]);
         index++;
-	}
+    }
+
+    //// ONLY draw when visible!
+    //if (subtitleVisible) {
+    //    std::cout << "HUD RENDER subtitle drawn\n";
+    //    //std::cout << "hud pos : ";
+    //    window.draw(subtitleText);
+    //}
 }
 
-void HUD::setSubtitle(const std::string& text) {
+void HUD::showSubtitle(const std::string& text, float duration)
+{
     subtitleText.setString(text);
 
-    // Center subtitle
+    // Recalculate origin (center text)
     sf::FloatRect bounds = subtitleText.getLocalBounds();
-    subtitleText.setOrigin({ bounds.size.x / 2.f, 0.f });
-    subtitleText.setPosition(sf::Vector2f(1920.f/2.f ,900.f) );
+    subtitleText.setOrigin({ bounds.size.x / 2.f, bounds.size.y / 2.f });
+
+    subtitleTimer = duration;
+    subtitleVisible = true;
+}
+
+void HUD::hideSubtitle()
+{
+    subtitleVisible = false;
+    subtitleTimer = 0.f;
 }
 
 sf::RectangleShape& HUD::getHud() { return staminaBarBack; }

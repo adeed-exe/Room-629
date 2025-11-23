@@ -3,7 +3,7 @@
 
 Game::Game()
     : background(backgroundTexture), titleScreenBackground(titleScreenBackgroundTexture), menuBackground(menuBackgroundTexture),
-    menuLeftHand(leftHandTexture), menuRightHand(rightHandTexture)
+    menuLeftHand(leftHandTexture), menuRightHand(rightHandTexture), cursor(cursorTexture)
 {
     initVariables();
     initWindow();
@@ -66,6 +66,13 @@ Game::Game()
         std::cout << "Menu right hand texture loaded!" << std::endl;
     }
 
+    if (cursorTexture.loadFromFile("Assets/Sprites/cursor_titleScreen.png")) {
+        std::cout << "Cursor texture loaded!" << std::endl;
+    }
+
+    cursor.setTexture(cursorTexture, true);
+    cursor.setOrigin(cursor.getGlobalBounds().size / 2.f);
+
     soundSystem->playBackgroundMusic();
 }
 
@@ -104,6 +111,7 @@ void Game::initVariables() {
     isMouseHeld = false;
     isEscapeHeld = false;
     isEnterHeld = false;
+    cursorTriggered = false;
 
     playerVelocity = { 0.f, 0.f };
     playerInAir = false;
@@ -208,7 +216,7 @@ void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
             isInTitleScreen = false;
         }
         saveSystem->save(savePath, gameState);
-        });
+        },400.f, 500.f, 0.8f);
 }
 
 
@@ -288,7 +296,6 @@ void Game::startCutscene() {
 
 void Game::endCutscene() {
     isCutsceneActive = false;
-    // DO NOT enable input here, let the cutscene system handle it
 }
 
 void Game::enablePlayerInput() {
@@ -311,9 +318,6 @@ void Game::playNewGameCutscene() {
     Move left
     Move right 
     End cutscene*/
-
-
-    
         
     //cutscene->addAction(new DialogueAction("I will show a dialogue text when this happens"));
     cutscene->addAction(new WaitAction(0.4f));
@@ -328,6 +332,7 @@ void Game::playNewGameCutscene() {
 
     cutscene->addAction(new WaitAction(3.f));
 
+    cutscene->addAction(new DialogueAction("aaaaaaaaaaaAAAAAAAAAAAAAAAAAAAaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa", 3.f));
 
     cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
     cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
@@ -369,7 +374,7 @@ void Game::update() {
         sir->animateIdle();   // update your frame animation
     }
 
-    nightmareAI();
+    // nightmareAI();
 
     if (playerInAir) playerVelocity.y += gravity * deltaTime;
 
@@ -401,7 +406,11 @@ void Game::render() {
         window->setView(viewSystem->getView());
         window->draw(player->getPlayer());
         // window->draw(nightmare->getNightmare());
-        hud->render(*window);
+
+        if (hud->subtitleVisible) {
+            window->draw(hud->subtitleText);
+        }
+
         auto it = rooms.find(gameState.currentRoomId);
         if (it != rooms.end()) {
             for (const Door& d : it->second.getDoors()) {
@@ -434,6 +443,7 @@ void Game::render() {
             for (int i = 0; i < titleScreenText.size(); i++) {
                 window->draw(titleScreenText[i]);
             }
+            window->draw(cursor);
         }
         else {
             window->draw(menuBackground);
@@ -474,6 +484,7 @@ void Game::titleScreen() {
         soundSystem->playStartSound();
         saveSystem->load(savePath, gameState);
         changeRoom(gameState.currentRoomId, gameState.playerPos);
+        window->setMouseCursorVisible(true);
     }
     isEnterHeld = isEnterPressed;
 
@@ -484,6 +495,7 @@ void Game::titleScreen() {
             soundSystem->playStartSound();
             saveSystem->load(savePath, gameState);
             changeRoom(gameState.currentRoomId, gameState.playerPos);
+            window->setMouseCursorVisible(true);
         }
         isMouseHeld = isMousePressed;
     }
@@ -494,19 +506,10 @@ void Game::titleScreen() {
 
 void Game::mainMenu() {
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
-    window->setMouseCursorVisible(false);
-    menuRightHand.setPosition({ mousePos.x - 20.f, mousePos.y - 20.f });
-    bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
-    if (isMousePressed) {
-        menuRightHand.setTexture(rightHandClickTexture, true);
-        menuRightHand.move({ -18, 0 });
-    }
-    else {
-        menuRightHand.setTexture(rightHandTexture, true);
-    }
     for (int i = 0; i < mainMenuText.size(); i++) {
         if (mainMenuText[i].getGlobalBounds().contains(mousePos)) {
             mainMenuText[i].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
+            bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
             if (isMousePressed && !isMouseHeld) {
                 soundSystem->playButtonSound();
                 if (i == 0) { // Continue
@@ -537,18 +540,9 @@ void Game::mainMenu() {
 
 void Game::controlsMenu() {
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
-    window->setMouseCursorVisible(false);
-    menuRightHand.setPosition({ mousePos.x - 20.f, mousePos.y - 20.f });
-    bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
-    if (isMousePressed) {
-        menuRightHand.setTexture(rightHandClickTexture, true);
-        menuRightHand.move({ -18, 0 });
-    }
-    else {
-        menuRightHand.setTexture(rightHandTexture, true);
-    }
     if (controlsMenuText[4].getGlobalBounds().contains(mousePos)) {
         controlsMenuText[4].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
+        bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
         if (isMousePressed && !isMouseHeld) {
             soundSystem->playButtonSound();
             isInMenu = true;
@@ -563,19 +557,10 @@ void Game::controlsMenu() {
 
 void Game::confirmationMenu() {
     sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
-    window->setMouseCursorVisible(false);
-    menuRightHand.setPosition({ mousePos.x - 20.f, mousePos.y - 20.f });
-    bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
-    if (isMousePressed) {
-        menuRightHand.setTexture(rightHandClickTexture, true);
-        menuRightHand.move({ -18, 0 });
-    }
-    else {
-        menuRightHand.setTexture(rightHandTexture, true);
-    }
     for (int i = 1; i < confirmationMenuText.size(); i++) {
         if (confirmationMenuText[i].getGlobalBounds().contains(mousePos)) {
             confirmationMenuText[i].setFillColor(sf::Color(150, 150, 150)); // Darken button while hovering
+            bool isMousePressed = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
             if (isMousePressed && !isMouseHeld) {
                 soundSystem->playButtonSound();
                 if (i == 1) { // No
@@ -649,6 +634,24 @@ void Game::run() {
                 pauseGame();
             }
             isEscapeHeld = isEscapePressed;
+
+            sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
+            menuRightHand.setPosition({ mousePos.x - 20.f, mousePos.y - 20.f });
+            cursor.setPosition({ mousePos.x - 20.f, mousePos.y - 20.f });
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left)) {
+                menuRightHand.setTexture(rightHandClickTexture, true);
+                menuRightHand.move({ -18, 0 });
+            }
+            else {
+                menuRightHand.setTexture(rightHandTexture, true);
+            }
+
+            if (isInMenu || isInConfirmationMenu || isInControlsMenu || isInTitleScreen) {
+                window->setMouseCursorVisible(false);
+            }
+            else {
+                window->setMouseCursorVisible(true);
+            }
         }
         if (isInTitleScreen) {
             titleScreen();
@@ -663,7 +666,6 @@ void Game::run() {
             confirmationMenu();
         }
         else {
-            window->setMouseCursorVisible(true);
             update();
         }
         render();
