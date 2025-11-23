@@ -32,6 +32,8 @@ void Player::initPlayer() {
         std::cout << "F button texture loaded!" << std::endl;
     }
 
+    
+
     playerChar.setTextureRect(sf::IntRect({ idleX * frameWidth, 0 }, { frameWidth, frameHeight }));
     playerChar.setScale({ game->scale, game->scale });
     playerChar.setOrigin({ frameWidth / 2.f, frameHeight / 2.f });
