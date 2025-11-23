@@ -101,11 +101,15 @@ void Game::initVariables() {
     window = nullptr;
 
     scale = 4.f;
+    scale0 = 4.f;
+    scale6 = 3.f;
     animationSpeed = 0.08f;
     playerMoveSpeed = 150.f;
     nightmareMoveSpeed = 225.f;
     gravity = 880.f;
     ground = 180.f;
+    ground6 = 250.f;
+    ground0 = 180.f;
 
     autoSaveTimer = 0.f;
     autoSaveInterval = 60.f;
@@ -151,30 +155,48 @@ void Game::buildCaches() {
 }
 
 void Game::initRooms() {
+    //ROOM 629 - 0
     Room r0(0, "Assets/Sprites/BG_room629.png", { 930.f, ground });
     r0.addDoor(Door(0, sf::FloatRect({ 1228.f, 64.f }, { 82.f, 200.f }), 1, { 100.f, ground }));
     rooms.emplace(0, std::move(r0));
 
+    //HALLWAY - 1
     Room r1(1, "Assets/Sprites/BG_hallway_6.png", { 100.f, ground });
     r1.addDoor(Door(0, sf::FloatRect({ 30.f, 64.f }, { 82.f, 200.f }), 0, { 1253.f, ground }));
     r1.addDoor(Door(1, sf::FloatRect({ 1115.f, 64.f }, { 82.f, 200.f }), 2, { 550.f, ground }));
     r1.addDoor(Door(2, sf::FloatRect({ 1010.f, 64.f }, { 82.f, 200.f }), 3, { 1010.f, ground }));
     rooms.emplace(1, std::move(r1));
 
+    //OFFICE - 2
     Room r2(2, "Assets/Sprites/BG_office_room.png", { 100.f, ground });
     r2.addDoor(Door(0, sf::FloatRect({ 550.f, 64.f }, { 82.f, 200.f }), 1, { 1120.f, ground }));
     r2.addItem(Item(2, 0, sf::FloatRect({ 445.f, 64.f }, { 82.f, 300.f }), { 489.f, 97.f }));
     rooms.emplace(2, std::move(r2));
 
+    //3RD FLOOR HALL - 3
     Room r3(3, "Assets/Sprites/BG_hallway_3.png", { 1000.f, ground });
     r3.addDoor(Door(0, sf::FloatRect({ 30.f, 64.f }, { 82.f, 200.f }), 4, { 1253.f, ground }));
     r3.addDoor(Door(1, sf::FloatRect({ 762.f, 64.f }, { 82.f, 200.f }), 1, { 762.f, ground }));
-    //r3.addItem(Item(3, 0, sf::FloatRect({ 445.f, 64.f }, { 82.f, 300.f }), { 489.f, 97.f }));
+    r3.addDoor(Door(2, sf::FloatRect({ 1010.f, 64.f }, { 82.f, 200.f }), 5, { 1010.f, ground }));
     rooms.emplace(3, std::move(r3));
 
+
+    //3RD FLOOR ROOM - 4
     Room r4(4, "Assets/Sprites/BG_room629.png", { 930.f, ground });
     r4.addDoor(Door(0, sf::FloatRect({ 1228.f, 64.f }, { 82.f, 200.f }), 3, { 100.f, ground }));
     rooms.emplace(4, std::move(r4));
+
+    //1ST FLOOR - 5
+    Room r5(5, "Assets/Sprites/BG_hallway_1.png", { 1000.f, ground });
+    r5.addDoor(Door(0, sf::FloatRect({ 30.f, 64.f }, { 82.f, 200.f }), 6, { 235.f, ground }));
+    r5.addDoor(Door(1, sf::FloatRect({ 762.f, 64.f }, { 82.f, 200.f }), 3, { 762.f, ground }));
+    rooms.emplace(5, std::move(r5));
+
+    //GALLERY - 6
+    Room r6(6, "Assets/Sprites/BG_gallery2.png", { 930.f, ground });
+    r6.addDoor(Door(0, sf::FloatRect({ 228.f, 64.f }, { 82.f, 200.f }), 5, { 100.f, ground }));
+    rooms.emplace(6, std::move(r6));
+
 
     std::cout << "======" << std::endl;
     for (auto& [roomId, room] : rooms) {
@@ -215,6 +237,7 @@ void Game::resetGame() {
 void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
     if (rooms.find(targetRoomId) == rooms.end()) return;
 
+
     transition->start([this, targetRoomId, spawnOverride]() {
         std::cout << "Changing to room: " << targetRoomId << "\n";
         gameState.currentRoomId = targetRoomId;
@@ -223,8 +246,12 @@ void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
         if (!room.loadTexture())
             std::cout << "Failed to load room texture!\n";
 
+
         room.applyToSprite(background);
         background.setPosition(background.getLocalBounds().size / 2.f);
+
+        hud->fatigue += 3;
+
         // Use spawnOverride if valid, otherwise default room spawn
         sf::Vector2f spawn = (spawnOverride.x >= 0.f) ? spawnOverride : room.getSpawn();
         player->getPlayer().setPosition(spawn);
@@ -238,8 +265,9 @@ void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
 
 
 void Game::inputHandler() {
-
     //player movement
+    
+
     playerRunning = sf::Keyboard::isKeyPressed(sf::Keyboard::Key::LShift);
     float moveSpeed = playerMoveSpeed;
     if (playerRunning && hud->stamina >= 1.f) moveSpeed *= 2.0f;
@@ -382,7 +410,7 @@ void Game::playNewGameCutscene() {
 
 void Game::cutsceneOfficeRoom() {
     sirPos.x = 100.806f;
-    sirPos.y = ground-2.f;
+    sirPos.y = ground-3.f;
 
     sir->getSir().setScale({ sir->getSir().getScale().x * (-1), sir->getSir().getScale().y });
 
@@ -413,15 +441,7 @@ void Game::cutsceneOfficeRoom() {
     cutscene->addAction(new DialogueAction("*Player gives the paper to Teacher*", 3.f));
     cutscene->addAction(new DialogueAction("Teacher : Alright, you can go. Thanks for the help. See you tomorrow.", 3.f));
     cutscene->addAction(new DialogueAction("Player : See you tomorrow, Sir.", 3.f));
-    //cutscene->addAction(new DialogueAction("I should go to home.", 3.f));
-   /* cutscene->addAction(new DialogueAction("", 3.f));
-    cutscene->addAction(new DialogueAction("", 3.f));
-    cutscene->addAction(new DialogueAction("", 3.f));
-    cutscene->addAction(new DialogueAction("", 3.f));
-    cutscene->addAction(new DialogueAction("", 3.f));
-    cutscene->addAction(new DialogueAction("", 3.f));*/
-
-
+    
     cutscene->addAction(new EndCutsceneAction());
 
     cutscene->start();
@@ -434,6 +454,7 @@ void Game::update() {
     gameState.curStamina = hud->stamina;
     gameState.curFatigue = hud->fatigue;
     gameState.playerPos = player->getPlayer().getPosition();
+
 
     autoSaveTimer += deltaTime;
     if (autoSaveTimer >= autoSaveInterval) {
@@ -500,6 +521,7 @@ void Game::update() {
     viewSystem->update(player->getPlayer().getPosition());
     hud->update(deltaTime, playerRunning && playerVelocity.x != 0.f);
 
+    //Triggers when has Papers, and goes to the 3rd room.
     if (gameState.progress == 1 && gameState.currentRoomId == 2) {
         auto it = gameState.items.find(3);
         if (it != gameState.items.end())
@@ -509,19 +531,50 @@ void Game::update() {
 
         if (!cutscene->isRunning()) {
 
-            changeRoom(1, { 1120.f, ground });
+            changeRoom(1, { 1020.f, ground });
 
+            player->getPlayer().setScale({ -scale, scale });
 
             gameState.progress = 2;
 
             saveSystem->save(savePath, gameState);
 
-            cutscene->start();
             cutscene->addAction(new WaitAction(4.f));
 
-            cutscene->addAction(new DialogueAction("I should go home..", 3.f));
-        }
+            cutscene->addAction(new DialogueAction("I'll just go home and sleep now..", 3.f));
+            cutscene->addAction(new WaitAction(1.f));
+
+            cutscene->start();
+
+        }              
     }
+
+    if (gameState.progress == 2 && gameState.currentRoomId == 1) {
+
+
+        if (!cutscene->isRunning()) {
+
+            changeRoom(0);
+
+            gameState.progress = 3;
+
+            saveSystem->save(savePath, gameState);
+
+            cutscene->addAction(new WaitAction(4.f));
+
+            cutscene->addAction(new DialogueAction("Wait.. Didn't I just go to home to sleep?..", 3.f));
+            cutscene->addAction(new WaitAction(1.f));
+
+            cutscene->start();
+
+            std::cout << "ROOM CHANGED TO 0" << std::endl;
+
+        }
+
+
+
+    }
+
 }
 
 void Game::render() {
@@ -533,6 +586,28 @@ void Game::render() {
 
     if (!isInMenu && !isInControlsMenu && !isInTitleScreen && !isInConfirmationMenu) {
         window->setView(viewSystem->getView());
+        if (gameState.currentRoomId == 6) {
+            player->getPlayer().setPosition({ player->getPlayer().getPosition().x, ground + 21.f });
+
+            if (player->getPlayer().getScale().x < 0.f) {
+                player->getPlayer().setScale({ -(scale - 1.f), scale - 1.f });
+            }
+
+            else {
+                player->getPlayer().setScale({ scale - 1.f, scale - 1.f });
+            }
+
+        }
+        else {
+            player->getPlayer().setPosition({ player->getPlayer().getPosition().x, ground });
+            if (player->getPlayer().getScale().x < 0.f) {
+                player->getPlayer().setScale({ -scale, scale });
+            }
+
+            else {
+                player->getPlayer().setScale({ scale, scale});
+            }
+        }
         window->draw(player->getPlayer());
 
         if (isNightmareHaunting) {

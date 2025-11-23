@@ -97,12 +97,15 @@ public:
 
     // Constants and states used across game
     float scale;
+    float scale6, scale0;
     float animationSpeed;
 
     float playerMoveSpeed;
     float nightmareMoveSpeed;
     float gravity;
     float ground;
+    float ground6;
+    float ground0;
 
     float autoSaveTimer;
     float autoSaveInterval;
