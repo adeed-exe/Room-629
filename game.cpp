@@ -569,13 +569,13 @@ void Game::update() {
     if (hud->fatigue >= 99) {
         isNightmareHaunting = true;
     }
-
+    /*
     if (isNightmareHaunting && hud->fatigue < 50) {
         isNightmareHaunting = false;
         vignetteAlpha = 0;
         vignette.setColor(sf::Color(255, 255, 255, vignetteAlpha));
     }
-
+    */
     if (playerInAir) playerVelocity.y += gravity * deltaTime;
 
     player->getPlayer().move(playerVelocity * deltaTime);
