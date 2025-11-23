@@ -68,7 +68,19 @@ void Nightmare::animateAttack() {
     if (frameTimer >= game->animationSpeed) {
         frameTimer = 0.f;
         nightmareChar.setTextureRect(sf::IntRect({ attackX * frameWidth, attackY * frameHeight }, { frameWidth, frameHeight }));
-        attackX = (attackX + 1) % totalAttack;
+        attackX++;
+        std::cout << "nightmare attacked" << std::endl;
+        if (attackX == totalAttack) {
+            attackX = 0;
+            game->isNightmareHaunting = false;
+            game->nightmareAttacking = false;
+            game->vignetteAlpha = 0;
+            game->vignette.setColor(sf::Color(255, 255, 255, game->vignetteAlpha));
+            game->hud->fatigue = 0;
+            if (game->gameState.progress != 4) {
+                game->changeRoom(0);
+            }
+        }
     }
 }
 

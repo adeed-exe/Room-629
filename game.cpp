@@ -3,7 +3,7 @@
 
 Game::Game()
     : background(backgroundTexture), titleScreenBackground(titleScreenBackgroundTexture), menuBackground(menuBackgroundTexture),
-    menuLeftHand(leftHandTexture), menuRightHand(rightHandTexture), cursor(cursorTexture)
+    menuLeftHand(leftHandTexture), menuRightHand(rightHandTexture), cursor(cursorTexture), vignette(vignetteTexture)
 {
     initVariables();
     initWindow();
@@ -70,8 +70,15 @@ Game::Game()
         std::cout << "Cursor texture loaded!" << std::endl;
     }
 
+    if (vignetteTexture.loadFromFile("Assets/Sprites/vignette.png")) {
+        std::cout << "Vignette texture loaded!" << std::endl;
+    }
+
     cursor.setTexture(cursorTexture, true);
     cursor.setOrigin(cursor.getGlobalBounds().size / 2.f);
+
+    vignette.setTexture(vignetteTexture, true);
+    vignette.setColor(sf::Color(255, 255, 255, 0));
 
     soundSystem->playBackgroundMusic();
 }
@@ -125,6 +132,7 @@ void Game::initVariables() {
     nightmareVelocity = { 0.f, 0.f };
     nightmareAttacking = false;
     nightmareRunning = false;
+    isNightmareHaunting = false;
 
     isCutsceneActive = false;
     allowPlayerInput = true;
@@ -254,8 +262,6 @@ void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
         saveSystem->save(savePath, gameState);
         },400.f, 500.f, 0.8f);
 }
-
-
 
 
 void Game::inputHandler() {
@@ -463,7 +469,6 @@ void Game::update() {
 
     transition->update(deltaTime);
 
-
     cutscene->update(deltaTime, this);
 
     if (allowPlayerInput) {
@@ -474,7 +479,27 @@ void Game::update() {
         sir->animateIdle();   // update your frame animation
     }
 
-    // nightmareAI();
+    if (isNightmareHaunting) {
+        vignetteAlpha += 30;
+        if (vignetteAlpha > 255) {
+            vignetteAlpha = 255;
+        }
+        vignette.setColor(sf::Color(255, 255, 255, vignetteAlpha));
+        nightmareAI();
+    }
+    else {
+        nightmare->getNightmare().setPosition({ 1920, ground + 22 });
+    }
+
+    if (hud->fatigue >= 99) {
+        isNightmareHaunting = true;
+    }
+
+    if (isNightmareHaunting && hud->stamina < 50) {
+        isNightmareHaunting = false;
+        vignetteAlpha = 0;
+        vignette.setColor(sf::Color(255, 255, 255, vignetteAlpha));
+    }
 
     if (playerInAir) playerVelocity.y += gravity * deltaTime;
 
@@ -582,7 +607,10 @@ void Game::render() {
             }
         }
         window->draw(player->getPlayer());
-        // window->draw(nightmare->getNightmare());
+
+        if (isNightmareHaunting) {
+            window->draw(nightmare->getNightmare());
+        }
 
         if (hud->subtitleVisible) {
             window->draw(hud->subtitleText);
@@ -647,14 +675,14 @@ void Game::render() {
     }
 
     transition->render(*window);
+    window->draw(vignette);
     window->display();
 }
 
 void Game::debug() {
     // sf::Vector2f mousePos(sf::Mouse::getPosition(*window));
     // std::cout << mousePos.x << " " << mousePos.y << std::endl;
-    
-    std::cout << player->getPlayer().getPosition().x << std::endl;
+    // std::cout << player->getPlayer().getPosition().x << std::endl;
 }
 
 void Game::titleScreen() {

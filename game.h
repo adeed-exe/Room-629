@@ -26,6 +26,7 @@ private:
     sf::Texture rightHandTexture;
     sf::Texture rightHandClickTexture;
     sf::Texture cursorTexture;
+    sf::Texture vignetteTexture;
 
     void initVariables();
     void initWindow();
@@ -74,6 +75,9 @@ public:
     sf::Sprite menuRightHand;
     sf::Sprite cursor;
     sf::RectangleShape fadeRect;
+    sf::Sprite vignette;
+
+    float vignetteAlpha = 0.f;
 
     float deltaTime;
     sf::Clock dtClock;
@@ -121,6 +125,7 @@ public:
 
     sf::Vector2f nightmareVelocity;
     bool nightmareAttacking, nightmareRunning;
+    bool isNightmareHaunting;
 
     // For level transition
     bool isTransitioning;
