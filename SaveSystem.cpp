@@ -60,6 +60,9 @@ bool SaveSystem::load(const std::string& filePath, GameState& state) {
     // Read stamina + fatigue
     in >> state.curStamina >> state.curFatigue;
 
+    game->hud->stamina = state.curStamina;
+    game->hud->fatigue = state.curFatigue;
+
     // Read inventory
     while (true) {
         int x;
