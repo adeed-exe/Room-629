@@ -487,9 +487,11 @@ void Game::update() {
         }
         vignette.setColor(sf::Color(255, 255, 255, vignetteAlpha));
         nightmareAI();
+        soundSystem->playStaticSound();
     }
     else {
         nightmare->getNightmare().setPosition({ 1920, ground + 22 });
+        soundSystem->stopStaticSound();
     }
 
     if (hud->fatigue >= 99) {

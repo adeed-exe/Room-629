@@ -5,7 +5,7 @@
 
 class Room {
 private:
-    int id = -1;
+    int id = 0;
     std::string texturePath;
     sf::Texture texture;
     sf::Sprite background;

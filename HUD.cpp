@@ -129,7 +129,7 @@ void HUD::update(float deltaTime, bool isRunning) {
 
     std::multiset<int> temp = game->gameState.items;
     bool deleting = false;
-    bool deletedItemId = -1;
+    int deletedItemId = -1;
     for (auto i : game->gameState.items) {
         sf::Vector2i mousePosWindow = sf::Mouse::getPosition(*game->window);
         sf::Vector2f mousePos = game->window->mapPixelToCoords(mousePosWindow);

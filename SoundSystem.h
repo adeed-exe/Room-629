@@ -13,12 +13,14 @@ private:
     sf::SoundBuffer buttonBuffer;
     sf::SoundBuffer startBuffer;
     sf::SoundBuffer doorBuffer;
+    sf::SoundBuffer staticBuffer;
 
     sf::Sound backgroundMusic;
     sf::Sound footstepSound;
     sf::Sound buttonSound;
     sf::Sound startSound;
     sf::Sound doorSound;
+    sf::Sound staticSound;
 
 public:
     SoundSystem(Game* gamePtr);
@@ -30,4 +32,6 @@ public:
     void playButtonSound();
     void playStartSound();
     void playDoorSound();
+    void playStaticSound();
+    void stopStaticSound();
 };
