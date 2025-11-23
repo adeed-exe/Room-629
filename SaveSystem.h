@@ -14,7 +14,7 @@ struct GameState {
     int currentRoomId = 0;
     int progress = 0; // Incrementing depicts progress
 
-    std::vector<int> roomInfo = std::vector<int>(3); // Whether items at each room are picked or not
+    std::vector<int> roomInfo = std::vector<int>(7); // Whether items at each room are picked or not
 };
 
 class SaveSystem {

@@ -184,6 +184,7 @@ void Game::initRooms() {
     //3RD FLOOR ROOM - 4
     Room r4(4, "Assets/Sprites/BG_room629.png", { 930.f, ground });
     r4.addDoor(Door(0, sf::FloatRect({ 1228.f, 64.f }, { 82.f, 200.f }), 3, { 100.f, ground }));
+    r4.addItem(Item(4, 3, sf::FloatRect({ 445.f, 64.f }, { 82.f, 300.f }), { 489.f, 157.f }));
     rooms.emplace(4, std::move(r4));
 
     //1ST FLOOR - 5
