@@ -153,10 +153,10 @@ void HUD::update(float deltaTime, bool isRunning) {
         game->saveSystem->save(game->savePath, game->gameState);
         deleting = false;
         if (deletedItemId == 0) {
-            stamina += 50;
+            fatigue -= 40;
         }
         else if (deletedItemId == 1) {
-            stamina += 20;
+            fatigue -= 15;
         }
         else if (deletedItemId == 2) {
 

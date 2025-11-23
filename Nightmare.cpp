@@ -80,6 +80,9 @@ void Nightmare::animateAttack() {
             if (game->gameState.progress != 4) {
                 game->changeRoom(0);
             }
+            else {
+                game->cutsceneGallery();
+            }
         }
     }
 }

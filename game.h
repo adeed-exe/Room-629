@@ -140,9 +140,13 @@ public:
     sf::Vector2f sirPos;
     bool isCutsceneActive;
     bool allowPlayerInput;
+
+    bool cutsceneOffice = false;
     
     void playNewGameCutscene();
     void cutsceneOfficeRoom();
+    void cutsceneNew2();
+    void cutsceneGallery();
     void startCutscene();
     void endCutscene();
     void enablePlayerInput();

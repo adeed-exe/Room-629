@@ -170,7 +170,7 @@ void Game::initRooms() {
     //OFFICE - 2
     Room r2(2, "Assets/Sprites/BG_office_room.png", { 100.f, ground });
     r2.addDoor(Door(0, sf::FloatRect({ 550.f, 64.f }, { 82.f, 200.f }), 1, { 1120.f, ground }));
-    r2.addItem(Item(2, 0, sf::FloatRect({ 445.f, 64.f }, { 82.f, 300.f }), { 489.f, 97.f }));
+    r2.addItem(Item(2, 0, sf::FloatRect({ 445.f, 64.f }, { 82.f, 300.f }), { 489.f, 93.f }));
     rooms.emplace(2, std::move(r2));
 
     //3RD FLOOR HALL - 3
@@ -184,7 +184,7 @@ void Game::initRooms() {
     //3RD FLOOR ROOM - 4
     Room r4(4, "Assets/Sprites/BG_room629.png", { 930.f, ground });
     r4.addDoor(Door(0, sf::FloatRect({ 1228.f, 64.f }, { 82.f, 200.f }), 3, { 100.f, ground }));
-    r4.addItem(Item(4, 3, sf::FloatRect({ 445.f, 64.f }, { 82.f, 300.f }), { 489.f, 157.f }));
+    r4.addItem(Item(4, 3, sf::FloatRect({ 1140.f, 64.f }, { 82.f, 300.f }), { 1140.f, 200.f }));
     rooms.emplace(4, std::move(r4));
 
     //1ST FLOOR - 5
@@ -196,6 +196,7 @@ void Game::initRooms() {
     //GALLERY - 6
     Room r6(6, "Assets/Sprites/BG_gallery2.png", { 930.f, ground });
     r6.addDoor(Door(0, sf::FloatRect({ 228.f, 64.f }, { 82.f, 200.f }), 5, { 100.f, ground }));
+    r6.addItem(Item(6, 2, sf::FloatRect({ 540.f, 64.f }, { 82.f, 300.f }), { 540.f, 200.f }));
     rooms.emplace(6, std::move(r6));
 
 
@@ -251,7 +252,8 @@ void Game::changeRoom(int targetRoomId, const sf::Vector2f& spawnOverride) {
         room.applyToSprite(background);
         background.setPosition(background.getLocalBounds().size / 2.f);
 
-        hud->fatigue += 3;
+        if(gameState.progress >= 4)
+            hud->fatigue += 3;
 
         // Use spawnOverride if valid, otherwise default room spawn
         sf::Vector2f spawn = (spawnOverride.x >= 0.f) ? spawnOverride : room.getSpawn();
@@ -374,7 +376,7 @@ void Game::playNewGameCutscene() {
     cutscene->addAction(new WaitAction(0.8f));
 
 
-    cutscene->addAction(new DialogueAction("Where's everyone? Did I doze off again", 3.f));
+    cutscene->addAction(new DialogueAction("Maybe I just woke up now..", 3.f));
     cutscene->addAction(new DialogueAction("Teacher: I was waiting for you to wake up..", 3.f));
 
 
@@ -390,7 +392,7 @@ void Game::playNewGameCutscene() {
     cutscene->addAction(new DialogueAction("Teacher : I had some work left here, and I need some help..", 3.f));
     cutscene->addAction(new DialogueAction("Teacher : Since you are here already..", 3.f));
     cutscene->addAction(new DialogueAction("Sorry Sir, I was feeling extremely tired. But I feel okay right now.", 3.f));
-    cutscene->addAction(new DialogueAction("Teacher : It would be great if you could get me my papers from room Gallery-2.", 3.5f));
+    cutscene->addAction(new DialogueAction("Teacher : It would be great if you could get me my papers from Room 329", 3.5f));
     cutscene->addAction(new DialogueAction("Teacher : It's on the Table.", 3.f));
 
     cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
@@ -403,7 +405,7 @@ void Game::playNewGameCutscene() {
     cutscene->start();
 
 
-    gameState.progress = 1;
+    gameState.progress = 4;
 
     saveSystem->save(savePath, gameState);
 }
@@ -447,6 +449,76 @@ void Game::cutsceneOfficeRoom() {
 
     cutscene->start();
 
+}
+
+void Game::cutsceneNew2() {
+    sirPos.x = 1250.f;
+    sirPos.y = ground - 2.f;
+
+    startCutscene(); // disable input
+
+    /* cutscene desc
+
+    Move right
+    Wait 3 second
+    Show dialogue
+    Move left
+    Move right
+    End cutscene*/
+
+    //cutscene->addAction(new DialogueAction("I will show a dialogue text when this happens"));
+    cutscene->addAction(new WaitAction(0.8f));
+
+    cutscene->addAction(new TurnAction(1.f));
+    cutscene->addAction(new TurnAction(1.5f));
+
+    cutscene->addAction(new WaitAction(0.8f));
+
+    cutscene->addAction(new DialogueAction("Where's everyone? Did I doze off again", 3.f));
+    cutscene->addAction(new DialogueAction("Teacher: I was waiting for you to wake up..", 3.f));
+
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(150.f, 0.f)));
+
+    cutscene->addAction(new WaitAction(0.2f));
+
+
+    cutscene->addAction(new DialogueAction(". . .", 1.f));
+    cutscene->addAction(new DialogueAction("Teacher : Everyone has already left.", 3.f));
+    cutscene->addAction(new DialogueAction("Teacher : I had some work left here, and I need some help..", 3.f));
+    cutscene->addAction(new DialogueAction("Teacher : Since you are here already..", 3.f));
+    cutscene->addAction(new DialogueAction("Sorry Sir, I was feeling extremely tired. But I feel okay right now.", 3.f));
+    cutscene->addAction(new DialogueAction("Teacher : It would be great if you could get me my marker from Gallery-2", 3.5f));
+    cutscene->addAction(new DialogueAction("Teacher : It's on the Table.", 3.f));
+
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+    cutscene->addAction(new MoveAction(0.5f, sf::Vector2f(-100.f, 0.f)));
+
+    cutscene->addAction(new EndCutsceneAction());
+
+    cutscene->start();
+
+    gameState.progress = 4;
+
+    saveSystem->save(savePath, gameState);
+}
+
+void Game::cutsceneGallery() {
+    cutscene->addAction(new WaitAction(2.8f));
+
+    cutscene->addAction(new DialogueAction(". . .", 2.f));
+    cutscene->addAction(new DialogueAction("WHAT WAS THAT", 2.f));
+    cutscene->addAction(new DialogueAction("I am hallucinating now? I should get a snack or go home and rest", 3.4f));
+
+    
+    cutscene->start();
+
+    gameState.progress = 5;
+
+    saveSystem->save(savePath, gameState);
 }
 
 void Game::update() {
@@ -498,7 +570,7 @@ void Game::update() {
         isNightmareHaunting = true;
     }
 
-    if (isNightmareHaunting && hud->stamina < 50) {
+    if (isNightmareHaunting && hud->fatigue < 50) {
         isNightmareHaunting = false;
         vignetteAlpha = 0;
         vignette.setColor(sf::Color(255, 255, 255, vignetteAlpha));
@@ -522,37 +594,37 @@ void Game::update() {
     viewSystem->update(player->getPlayer().getPosition());
     hud->update(deltaTime, playerRunning && playerVelocity.x != 0.f);
 
-    //Triggers when has Papers, and goes to the 3rd room.
+    //Triggers when has Papers, and goes to the office room.
     if (gameState.progress == 1 && gameState.currentRoomId == 2) {
         auto it = gameState.items.find(3);
         if (it != gameState.items.end())
         {
-            cutsceneOfficeRoom();            
+            cutsceneOfficeRoom();
+
+
+            if (!cutscene->isRunning()) {
+
+                changeRoom(1, { 1020.f, ground });
+
+                player->getPlayer().setScale({ -scale, scale });
+
+                gameState.progress = 2;
+
+                saveSystem->save(savePath, gameState);
+
+                cutscene->addAction(new WaitAction(4.f));
+
+                cutscene->addAction(new DialogueAction("I'll just go home and sleep now..", 3.f));
+                cutscene->addAction(new WaitAction(1.f));
+
+                cutscene->start();
+
+            }
         }
-
-        if (!cutscene->isRunning()) {
-
-            changeRoom(1, { 1020.f, ground });
-
-            player->getPlayer().setScale({ -scale, scale });
-
-            gameState.progress = 2;
-
-            saveSystem->save(savePath, gameState);
-
-            cutscene->addAction(new WaitAction(4.f));
-
-            cutscene->addAction(new DialogueAction("I'll just go home and sleep now..", 3.f));
-            cutscene->addAction(new WaitAction(1.f));
-
-            cutscene->start();
-
-        }              
     }
 
-    if (gameState.progress == 2 && gameState.currentRoomId == 1) {
-
-
+    //after office room, goes to sleep -> send to room 629
+    if (gameState.progress == 2 && gameState.currentRoomId == 1 && !cutsceneOffice) {
         if (!cutscene->isRunning()) {
 
             changeRoom(0);
@@ -570,10 +642,18 @@ void Game::update() {
 
             std::cout << "ROOM CHANGED TO 0" << std::endl;
 
+            cutsceneOffice = true;
         }
+    }
 
+    //continues the cycle again after one 
+    if (gameState.progress == 3 && gameState.currentRoomId == 0) {
+        cutsceneNew2();
+    }
 
-
+    if (gameState.progress == 4 && gameState.currentRoomId == 6) {
+        isNightmareHaunting = true;
+        vignetteAlpha = 255;
     }
 
 }
@@ -609,7 +689,7 @@ void Game::render() {
                 player->getPlayer().setScale({ scale, scale});
             }
         }
-        window->draw(player->getPlayer());
+        
 
         if (isNightmareHaunting) {
             window->draw(nightmare->getNightmare());
@@ -620,6 +700,8 @@ void Game::render() {
         }
          
         hud->render(*window);
+        
+
 
         auto it = rooms.find(gameState.currentRoomId);
         if (it != rooms.end()) {
@@ -645,6 +727,8 @@ void Game::render() {
                 }
             }
         }
+
+        window->draw(player->getPlayer());
     }
     else {
         window->setView(window->getDefaultView());
